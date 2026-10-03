@@ -268,7 +268,7 @@
     {
       "school": "CY Tech",
       "degree": "Master of Engineering (MEng), Applied Mathematics",
-      "description": "First year. Focus on Applied Mathematics and Data Science.",
+      "description": "First year.\nFocus on Applied Mathematics and Data Science.",
       "start_year": 2026,
       "end_year": 2029,
       "position": 0,
@@ -277,7 +277,7 @@
     {
       "school": "Université de Lille",
       "degree": "Bachelor of Technology (BSc), Data Science",
-      "description": "Graduated with Honours · 3.7 GPA. Focus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design. Core Courses: Statistics, Big Data, AI, BI, Data Engineering. Activities: Hackathon, surveys, seminar organization.",
+      "description": "Graduated with Honours · 3.7 GPA.\nFocus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design.\nCore Courses: Statistics, Big Data, AI, BI, Data Engineering.\nActivities: Hackathon, surveys, seminar organization.",
       "start_year": 2023,
       "end_year": 2026,
       "position": 1,
@@ -286,7 +286,7 @@
     {
       "school": "En-nour 1 High School",
       "degree": "Scientific Baccalaureate, Physics and Chemistry Track",
-      "description": "Graduated with Highest Honors. Core Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography. Activities: Travel organization, Mathematics tutoring, association internship, theater.",
+      "description": "Graduated with Highest Honors.\nCore Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography.\nActivities: Travel organization, Mathematics tutoring, association internship, theater.",
       "start_year": 2020,
       "end_year": 2023,
       "position": 2,

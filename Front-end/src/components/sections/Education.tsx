@@ -78,7 +78,7 @@ export function Education() {
                   </div>
                 </div>
                 <p className="mt-2 text-muted">{e.degree}</p>
-                {e.description && <p className="mt-3 text-[0.95rem] text-muted">{e.description}</p>}
+                {e.description && <p className="mt-3 whitespace-pre-line text-[0.95rem] text-muted">{e.description}</p>}
               </li>
             ))}
           </ol>
