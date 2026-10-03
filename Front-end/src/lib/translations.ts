@@ -39,7 +39,7 @@ const en = {
   skillsEyebrow: "Skills",
   skillsTitle: "The data value chain",
   skillsIntro: "From ingestion to decision: data engineering, AI, BI and software development.",
-  languagesLabel: "Languages",
+  languagesLabel: "I speak",
   // education section
   educationIndex: "04",
   educationEyebrow: "Education",
@@ -125,7 +125,7 @@ const fr: typeof en = {
   skillsEyebrow: "Compétences",
   skillsTitle: "La chaîne de valeur de la donnée",
   skillsIntro: "De l'ingestion à la décision : data engineering, IA, BI et développement logiciel.",
-  languagesLabel: "Langues",
+  languagesLabel: "Je parle",
   educationIndex: "04",
   educationEyebrow: "Formation",
   educationTitle: "Formation et certifications",
