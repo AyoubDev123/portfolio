@@ -6,6 +6,7 @@ import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
 import { formatPeriod } from "../../lib/format";
 import { usePortfolio } from "../../lib/portfolio";
+import { LogoBadge } from "../LogoBadge";
 import { Chip, Section } from "../Section";
 
 export function Experience() {
@@ -63,9 +64,12 @@ export function Experience() {
               />
               <article className="card p-6 sm:p-7">
                 <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
-                  <div>
-                    <h3 className="text-xl font-semibold tracking-tight">{exp.company}</h3>
-                    <p className="text-muted">{exp.role}</p>
+                  <div className="flex items-center gap-3">
+                    <LogoBadge name={exp.company} />
+                    <div>
+                      <h3 className="text-xl font-semibold tracking-tight">{exp.company}</h3>
+                      <p className="text-muted">{exp.role}</p>
+                    </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 font-mono text-xs text-muted">
                     <Chip>{exp.contract}</Chip>

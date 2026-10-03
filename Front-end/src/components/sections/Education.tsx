@@ -5,6 +5,7 @@ import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
 import { usePortfolio } from "../../lib/portfolio";
 import { InterestIcon } from "../icons";
+import { LogoBadge } from "../LogoBadge";
 import { Section } from "../Section";
 
 export function Education() {
@@ -69,11 +70,14 @@ export function Education() {
           <ol className="space-y-4">
             {data.education.map((e) => (
               <li key={e.id} className="card p-5 sm:p-6">
-                <p className="font-mono text-xs text-muted">
-                  {e.start_year} – {e.end_year}
-                </p>
-                <h3 className="mt-1 text-lg font-semibold tracking-tight">{e.school}</h3>
-                <p className="text-muted">{e.degree}</p>
+                <div className="flex items-center gap-3">
+                  <LogoBadge name={e.school} />
+                  <div>
+                    <p className="font-mono text-xs text-muted">{e.start_year} – {e.end_year}</p>
+                    <h3 className="text-lg font-semibold tracking-tight leading-snug">{e.school}</h3>
+                  </div>
+                </div>
+                <p className="mt-2 text-muted">{e.degree}</p>
                 {e.description && <p className="mt-3 text-[0.95rem] text-muted">{e.description}</p>}
               </li>
             ))}
