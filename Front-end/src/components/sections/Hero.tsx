@@ -1,5 +1,5 @@
 import { useGSAP } from "@gsap/react";
-import { ArrowRight, Download, Mail, MapPin, Trophy } from "lucide-react";
+import { ArrowRight, Download, Mail, MapPin } from "lucide-react";
 import { useRef } from "react";
 import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
@@ -56,9 +56,8 @@ function MetricItem({ m }: { m: Metric }) {
 
 export function Hero() {
   const { data } = usePortfolio();
-  const { profile, certifications } = data;
+  const { profile } = data;
   const { t } = useLang();
-  const award = certifications.find((c) => c.kind === "distinction");
 
   const titleRef = useRef<HTMLHeadingElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
@@ -165,17 +164,6 @@ export function Hero() {
             fetchPriority="high"
             className="relative aspect-[4/5] w-full rounded-[1.75rem] border border-line object-cover object-[50%_30%] shadow-card"
           />
-          {award && (
-            <div className="card absolute -bottom-6 right-3 flex max-w-[16rem] items-center gap-3 px-4 py-3 sm:right-[-1.25rem]">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-soft text-brand">
-                <Trophy className="h-4 w-4" aria-hidden="true" />
-              </span>
-              <p className="text-sm leading-snug">
-                <span className="block font-semibold">{award.name}</span>
-                <span className="text-muted">{award.date_label}</span>
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
