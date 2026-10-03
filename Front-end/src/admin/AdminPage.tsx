@@ -492,6 +492,7 @@ interface Message {
   email: string;
   subject: string;
   message: string;
+  is_read: boolean;
   created_at: string;
 }
 
@@ -508,34 +509,70 @@ function Messages({ onAuthError }: { onAuthError: () => void }) {
   }, [guard]);
   useEffect(load, [load]);
 
+  const markRead = useCallback(
+    (id: number) => {
+      admin
+        .patch<Message>(`messages/${id}/read`)
+        .then((updated) => setRows((prev) => prev?.map((m) => (m.id === id ? updated : m)) ?? prev))
+        .catch((e) => setError(guard(e)));
+    },
+    [guard],
+  );
+
   if (error) return <p role="alert" className="text-red-600 dark:text-red-400">{error}</p>;
   if (!rows) return <p className="text-muted">Chargement…</p>;
   if (rows.length === 0) return <p className="text-muted">Aucun message pour l'instant.</p>;
 
+  const unread = rows.filter((m) => !m.is_read).length;
+
   return (
-    <ul className="space-y-4">
-      {rows.map((m) => (
-        <li key={m.id} className="card p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="font-semibold">{m.subject}</p>
-              <p className="text-sm text-muted">
-                {m.name} · <a className="underline" href={`mailto:${m.email}`}>{m.email}</a> ·{" "}
-                {new Date(m.created_at).toLocaleString("fr-FR")}
-              </p>
+    <div>
+      {unread > 0 && (
+        <p className="mb-4 text-sm font-medium text-brand">
+          {unread} message{unread > 1 ? "s" : ""} non lu{unread > 1 ? "s" : ""}
+        </p>
+      )}
+      <ul className="space-y-4">
+        {rows.map((m) => (
+          <li key={m.id} className={`card p-5 ${m.is_read ? "opacity-70" : "ring-1 ring-brand/30"}`}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex items-start gap-2">
+                {!m.is_read && (
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand" aria-label="Non lu" />
+                )}
+                <div>
+                  <p className="font-semibold">{m.subject}</p>
+                  <p className="text-sm text-muted">
+                    {m.name} · <a className="underline" href={`mailto:${m.email}`}>{m.email}</a> ·{" "}
+                    {new Date(m.created_at).toLocaleString("fr-FR")}
+                  </p>
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                {!m.is_read && (
+                  <button
+                    type="button"
+                    className="btn btn-ghost text-xs"
+                    onClick={() => markRead(m.id)}
+                    aria-label={`Marquer comme lu : ${m.subject}`}
+                  >
+                    Marquer comme lu
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="btn btn-ghost !p-2.5"
+                  aria-label={`Supprimer le message de ${m.name}`}
+                  onClick={() => admin.remove("messages", m.id).then(load).catch((e) => setError(guard(e)))}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-            <button
-              type="button"
-              className="btn btn-ghost !p-2.5"
-              aria-label={`Supprimer le message de ${m.name}`}
-              onClick={() => admin.remove("messages", m.id).then(load).catch((e) => setError(guard(e)))}
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-          <p className="mt-3 whitespace-pre-wrap text-[0.95rem]">{m.message}</p>
-        </li>
-      ))}
-    </ul>
+            <p className="mt-3 whitespace-pre-wrap text-[0.95rem]">{m.message}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

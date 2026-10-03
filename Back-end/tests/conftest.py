@@ -7,6 +7,13 @@ from app.main import create_app
 ADMIN_USER = "admin"
 ADMIN_PASS = "s3cret-pass-for-tests"
 
+PAYLOAD = {
+    "name": "Camille Dupont",
+    "email": "camille@example.com",
+    "subject": "Proposition",
+    "message": "Bonjour Ayoub, votre profil nous intéresse beaucoup.",
+}
+
 
 @pytest.fixture
 def settings() -> Settings:
@@ -25,12 +32,15 @@ def settings() -> Settings:
 @pytest.fixture
 def client(settings: Settings):
     app = create_app(settings)
-    with TestClient(app) as c:  # le `with` déclenche le lifespan (création + seed)
+    with TestClient(app, raise_server_exceptions=True) as c:
         yield c
 
 
 @pytest.fixture
-def auth_headers(client: TestClient) -> dict[str, str]:
+def auth_client(client: TestClient) -> TestClient:
+    """Client déjà connecté : le cookie HttpOnly access_token est positionné."""
     r = client.post("/api/auth/login", json={"username": ADMIN_USER, "password": ADMIN_PASS})
     assert r.status_code == 200, r.text
-    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+    # Le TestClient (requests.Session) stocke le cookie Set-Cookie automatiquement.
+    # Toutes les requêtes suivantes depuis ce client incluront le cookie.
+    return client

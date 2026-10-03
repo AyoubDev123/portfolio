@@ -72,6 +72,8 @@ export const admin = {
     request<T>(`/api/admin/${path}`, { method: "POST", body: JSON.stringify(body) }),
   update: <T>(path: string, id: number | null, body: unknown) =>
     request<T>(`/api/admin/${path}${id === null ? "" : `/${id}`}`, { method: "PUT", body: JSON.stringify(body) }),
+  patch: <T>(path: string) =>
+    request<T>(`/api/admin/${path}`, { method: "PATCH" }),
   remove: (path: string, id: number) =>
     request<void>(`/api/admin/${path}/${id}`, { method: "DELETE" }),
 };
