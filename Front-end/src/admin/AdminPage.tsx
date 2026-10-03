@@ -1,52 +1,37 @@
 import { LogOut, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { admin, ApiError, login } from "../lib/api";
+import { admin, ApiError, getMe, login, logout } from "../lib/api";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { ENTITIES, type EntityDef, type Field, type Row } from "./entities";
 import { FormError, toFormState, toPayload, type FormState } from "./form";
 
-const TOKEN_KEY = "admin_token";
-
-function readToken(): string | null {
-  try {
-    return sessionStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
-}
-
 export default function AdminPage() {
   useDocumentTitle("Administration · Portfolio");
-  const [token, setToken] = useState<string | null>(readToken);
+  // null = inconnu (vérif en cours), false = non connecté, true = connecté
+  const [authed, setAuthed] = useState<boolean | null>(null);
 
-  const signOut = useCallback(() => {
+  useEffect(() => {
+    getMe()
+      .then(() => setAuthed(true))
+      .catch(() => setAuthed(false));
+  }, []);
+
+  const signOut = useCallback(async () => {
     try {
-      sessionStorage.removeItem(TOKEN_KEY);
+      await logout();
     } catch {
       /* ignore */
     }
-    setToken(null);
+    setAuthed(false);
   }, []);
 
-  if (!token) {
-    return (
-      <Login
-        onToken={(t) => {
-          try {
-            sessionStorage.setItem(TOKEN_KEY, t);
-          } catch {
-            /* ignore */
-          }
-          setToken(t);
-        }}
-      />
-    );
-  }
-  return <Dashboard token={token} onSignOut={signOut} />;
+  if (authed === null) return <p className="container-page pt-20 text-muted">Chargement…</p>;
+  if (!authed) return <Login onSuccess={() => setAuthed(true)} />;
+  return <Dashboard onSignOut={signOut} />;
 }
 
 // ── Connexion ────────────────────────────────────────────────────────────────
-function Login({ onToken }: { onToken: (t: string) => void }) {
+function Login({ onSuccess }: { onSuccess: () => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -57,8 +42,8 @@ function Login({ onToken }: { onToken: (t: string) => void }) {
     setBusy(true);
     setError("");
     try {
-      const res = await login(username, password);
-      onToken(res.access_token);
+      await login(username, password);
+      onSuccess();
     } catch (err) {
       setError(
         err instanceof ApiError && err.status < 500 && err.status !== 404
@@ -115,7 +100,7 @@ function Login({ onToken }: { onToken: (t: string) => void }) {
 // ── Tableau de bord ──────────────────────────────────────────────────────────
 type Tab = EntityDef | "messages";
 
-function Dashboard({ token, onSignOut }: { token: string; onSignOut: () => void }) {
+function Dashboard({ onSignOut }: { onSignOut: () => void }) {
   const [tab, setTab] = useState<Tab>(ENTITIES[0]);
 
   return (
@@ -152,11 +137,11 @@ function Dashboard({ token, onSignOut }: { token: string; onSignOut: () => void 
 
       <div className="mt-8" role="tabpanel">
         {tab === "messages" ? (
-          <Messages token={token} onAuthError={onSignOut} />
+          <Messages onAuthError={onSignOut} />
         ) : tab.singleton ? (
-          <SingletonEditor key={tab.id} def={tab} token={token} onAuthError={onSignOut} />
+          <SingletonEditor key={tab.id} def={tab} onAuthError={onSignOut} />
         ) : (
-          <CollectionEditor key={tab.id} def={tab} token={token} onAuthError={onSignOut} />
+          <CollectionEditor key={tab.id} def={tab} onAuthError={onSignOut} />
         )}
       </div>
     </div>
@@ -165,7 +150,6 @@ function Dashboard({ token, onSignOut }: { token: string; onSignOut: () => void 
 
 interface EditorProps {
   def: EntityDef;
-  token: string;
   onAuthError: () => void;
 }
 
@@ -182,7 +166,7 @@ function useGuard(onAuthError: () => void) {
   );
 }
 
-function SingletonEditor({ def, token, onAuthError }: EditorProps) {
+function SingletonEditor({ def, onAuthError }: EditorProps) {
   const [row, setRow] = useState<Row | null>(null);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
@@ -190,10 +174,10 @@ function SingletonEditor({ def, token, onAuthError }: EditorProps) {
 
   useEffect(() => {
     admin
-      .get<Row>(def.path, token)
+      .get<Row>(def.path)
       .then(setRow)
       .catch((e) => setError(guard(e)));
-  }, [def.path, token, guard]);
+  }, [def.path, guard]);
 
   if (!row) return <p className="text-muted">{error || "Chargement…"}</p>;
   return (
@@ -207,7 +191,7 @@ function SingletonEditor({ def, token, onAuthError }: EditorProps) {
         setError("");
         setSaved(false);
         try {
-          setRow(await admin.update<Row>(def.path, null, payload, token));
+          setRow(await admin.update<Row>(def.path, null, payload));
           setSaved(true);
         } catch (e) {
           setError(guard(e));
@@ -217,7 +201,7 @@ function SingletonEditor({ def, token, onAuthError }: EditorProps) {
   );
 }
 
-function CollectionEditor({ def, token, onAuthError }: EditorProps) {
+function CollectionEditor({ def, onAuthError }: EditorProps) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [editing, setEditing] = useState<Row | "new" | null>(null);
   const [confirmId, setConfirmId] = useState<number | null>(null);
@@ -227,17 +211,16 @@ function CollectionEditor({ def, token, onAuthError }: EditorProps) {
 
   const load = useCallback(() => {
     admin
-      .list<Row>(def.path, token)
+      .list<Row>(def.path)
       .then(setRows)
       .catch((e) => setError(guard(e)));
-  }, [def.path, token, guard]);
+  }, [def.path, guard]);
 
   useEffect(load, [load]);
   useEffect(() => {
-    if (def.id === "projects") admin.list<Row>("experiences", token).then(setExperiences).catch(() => undefined);
-  }, [def.id, token]);
+    if (def.id === "projects") admin.list<Row>("experiences").then(setExperiences).catch(() => undefined);
+  }, [def.id]);
 
-  // Le sélecteur « expérience liée » est alimenté dynamiquement.
   const resolvedDef = useMemo<EntityDef>(
     () =>
       def.id !== "projects"
@@ -261,7 +244,7 @@ function CollectionEditor({ def, token, onAuthError }: EditorProps) {
 
   async function remove(id: number) {
     try {
-      await admin.remove(def.path, id, token);
+      await admin.remove(def.path, id);
       setConfirmId(null);
       load();
     } catch (e) {
@@ -284,8 +267,8 @@ function CollectionEditor({ def, token, onAuthError }: EditorProps) {
           onSubmit={async (payload) => {
             setError("");
             try {
-              if (isNew) await admin.create<Row>(def.path, payload, token);
-              else await admin.update<Row>(def.path, (editing as Row).id ?? null, payload, token);
+              if (isNew) await admin.create<Row>(def.path, payload);
+              else await admin.update<Row>(def.path, (editing as Row).id ?? null, payload);
               setEditing(null);
               load();
             } catch (e) {
@@ -512,17 +495,17 @@ interface Message {
   created_at: string;
 }
 
-function Messages({ token, onAuthError }: { token: string; onAuthError: () => void }) {
+function Messages({ onAuthError }: { onAuthError: () => void }) {
   const [rows, setRows] = useState<Message[] | null>(null);
   const [error, setError] = useState("");
   const guard = useGuard(onAuthError);
 
   const load = useCallback(() => {
     admin
-      .list<Message>("messages", token)
+      .list<Message>("messages")
       .then(setRows)
       .catch((e) => setError(guard(e)));
-  }, [token, guard]);
+  }, [guard]);
   useEffect(load, [load]);
 
   if (error) return <p role="alert" className="text-red-600 dark:text-red-400">{error}</p>;
@@ -545,7 +528,7 @@ function Messages({ token, onAuthError }: { token: string; onAuthError: () => vo
               type="button"
               className="btn btn-ghost !p-2.5"
               aria-label={`Supprimer le message de ${m.name}`}
-              onClick={() => admin.remove("messages", m.id, token).then(load).catch((e) => setError(guard(e)))}
+              onClick={() => admin.remove("messages", m.id).then(load).catch((e) => setError(guard(e)))}
             >
               <Trash2 className="h-4 w-4" />
             </button>

@@ -138,3 +138,13 @@ class AdminUser(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True)
     password_hash: Mapped[str] = mapped_column(String(200))
+
+
+class TokenBlocklist(Base):
+    """JTI des tokens révoqués (logout). Purgé périodiquement à chaque connexion."""
+
+    __tablename__ = "token_blocklist"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    jti: Mapped[str] = mapped_column(String(36), unique=True, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

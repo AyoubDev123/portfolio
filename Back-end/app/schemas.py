@@ -207,10 +207,10 @@ class LoginIn(BaseModel):
     password: str
 
 
-class TokenOut(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    expires_in: int
+class LoginOut(BaseModel):
+    """Le token n'est plus exposé au JS : il est positionné dans un cookie HttpOnly."""
+
+    ok: bool = True
 
 
 class MeOut(BaseModel):

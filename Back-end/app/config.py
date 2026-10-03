@@ -23,9 +23,14 @@ class Settings(BaseSettings):
 
     # Auth admin
     secret_key: str = Field(default=DEFAULT_SECRET, min_length=32)
-    access_token_minutes: int = 60
+    access_token_minutes: int = 30  # TTL court : réduit la fenêtre d'un token intercepté
     admin_username: str = ""
     admin_password: str = ""  # si les deux sont définis, le compte est créé au 1er démarrage
+
+    # Snapshot statique : chemin du JSON régénéré après chaque mutation admin.
+    # En production Docker, pointer vers le volume partagé avec Nginx (/data/snapshot.json).
+    # Laisser vide pour désactiver (ex. hébergement statique sans volume).
+    static_snapshot_path: str = ""
 
     # Formulaire de contact (SMTP optionnel : sans SMTP, le message est seulement stocké)
     contact_to: str = ""

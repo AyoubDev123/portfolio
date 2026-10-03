@@ -11,12 +11,15 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}, token?: string | null): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
 
-  const res = await fetch(`${BASE}${path}`, { ...init, headers });
+  const res = await fetch(`${BASE}${path}`, {
+    ...init,
+    headers,
+    credentials: "include", // envoie le cookie HttpOnly access_token automatiquement
+  });
   if (res.status === 204) return undefined as T;
 
   const text = await res.text();
@@ -50,20 +53,25 @@ export const fetchPortfolio = (signal?: AbortSignal) => request<Portfolio>("/api
 export const sendContact = (payload: ContactPayload) =>
   request<{ ok: boolean }>("/api/contact", { method: "POST", body: JSON.stringify(payload) });
 
-// ── Admin ────────────────────────────────────────────────────────────────────
+// ── Auth ─────────────────────────────────────────────────────────────────────
 export const login = (username: string, password: string) =>
-  request<{ access_token: string; expires_in: number }>("/api/auth/login", {
+  request<{ ok: boolean }>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify({ username, password }),
   });
 
+export const logout = () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" });
+
+export const getMe = () => request<{ username: string }>("/api/auth/me");
+
+// ── Admin ────────────────────────────────────────────────────────────────────
 export const admin = {
-  list: <T>(path: string, token: string) => request<T[]>(`/api/admin/${path}`, {}, token),
-  get: <T>(path: string, token: string) => request<T>(`/api/admin/${path}`, {}, token),
-  create: <T>(path: string, body: unknown, token: string) =>
-    request<T>(`/api/admin/${path}`, { method: "POST", body: JSON.stringify(body) }, token),
-  update: <T>(path: string, id: number | null, body: unknown, token: string) =>
-    request<T>(`/api/admin/${path}${id === null ? "" : `/${id}`}`, { method: "PUT", body: JSON.stringify(body) }, token),
-  remove: (path: string, id: number, token: string) =>
-    request<void>(`/api/admin/${path}/${id}`, { method: "DELETE" }, token),
+  list: <T>(path: string) => request<T[]>(`/api/admin/${path}`),
+  get: <T>(path: string) => request<T>(`/api/admin/${path}`),
+  create: <T>(path: string, body: unknown) =>
+    request<T>(`/api/admin/${path}`, { method: "POST", body: JSON.stringify(body) }),
+  update: <T>(path: string, id: number | null, body: unknown) =>
+    request<T>(`/api/admin/${path}${id === null ? "" : `/${id}`}`, { method: "PUT", body: JSON.stringify(body) }),
+  remove: (path: string, id: number) =>
+    request<void>(`/api/admin/${path}/${id}`, { method: "DELETE" }),
 };

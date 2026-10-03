@@ -27,9 +27,12 @@ def make_engine(url: str) -> Engine:
     if url.startswith("sqlite"):
 
         @event.listens_for(engine, "connect")
-        def _fk_pragma(dbapi_conn, _record):  # active les clés étrangères sous SQLite
+        def _sqlite_pragmas(dbapi_conn, _record):
             cur = dbapi_conn.cursor()
             cur.execute("PRAGMA foreign_keys=ON")
+            # WAL : les lectures ne bloquent plus les écritures (et vice-versa).
+            # Élimine le verrouillage global qui faisait timeout les GET pendant un spam POST /contact.
+            cur.execute("PRAGMA journal_mode=WAL")
             cur.close()
 
     return engine

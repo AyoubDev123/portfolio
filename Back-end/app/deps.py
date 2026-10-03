@@ -3,7 +3,6 @@
 from collections.abc import Iterator
 
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -11,7 +10,7 @@ from . import models
 from .config import Settings
 from .security import RateLimiter, decode_access_token
 
-bearer = HTTPBearer(auto_error=False)
+_COOKIE = "access_token"
 
 
 def get_settings(request: Request) -> Settings:
@@ -36,20 +35,27 @@ def client_ip(request: Request) -> str:
 
 
 def require_admin(
-    creds: HTTPAuthorizationCredentials | None = Depends(bearer),
+    request: Request,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> models.AdminUser:
-    unauthorized = HTTPException(
-        status.HTTP_401_UNAUTHORIZED,
-        "Authentification requise",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    if creds is None:
+    unauthorized = HTTPException(status.HTTP_401_UNAUTHORIZED, "Authentification requise")
+
+    token = request.cookies.get(_COOKIE)
+    if not token:
         raise unauthorized
-    username = decode_access_token(creds.credentials, settings.secret_key)
-    if username is None:
+
+    result = decode_access_token(token, settings.secret_key)
+    if result is None:
         raise unauthorized
+
+    username, jti = result
+
+    # Vérifie que le token n'a pas été révoqué (logout ou rotation).
+    blocked = db.scalars(select(models.TokenBlocklist).where(models.TokenBlocklist.jti == jti)).first()
+    if blocked:
+        raise unauthorized
+
     user = db.scalars(select(models.AdminUser).where(models.AdminUser.username == username)).first()
     if user is None:
         raise unauthorized
