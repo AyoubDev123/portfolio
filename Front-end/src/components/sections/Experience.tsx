@@ -80,61 +80,63 @@ export function Experience() {
           {data.experiences.map((exp) => (
             <li
               key={exp.id}
-              className="snap-start shrink-0 w-[min(88vw,420px)]"
+              className="snap-start shrink-0 w-[min(88vw,380px)]"
             >
-              <article className="card flex h-full flex-col p-6 sm:p-7">
-                {/* Header */}
-                <header>
+              <article className="card flex flex-col p-5 sm:p-6" style={{ height: 420 }}>
+                {/* Header — fixe */}
+                <header className="shrink-0">
                   <div className="flex items-center gap-3">
-                    <LogoBadge name={exp.company} size={44} />
+                    <LogoBadge name={exp.company} size={40} />
                     <div className="min-w-0">
-                      <h3 className="truncate text-lg font-semibold tracking-tight">{exp.company}</h3>
+                      <h3 className="truncate font-semibold tracking-tight">{exp.company}</h3>
                       <p className="truncate text-sm text-muted">{exp.role}</p>
                     </div>
+                    {exp.current && (
+                      <span className="relative ml-auto flex h-2 w-2 shrink-0" aria-label="En poste">
+                        <span className="ping-soft absolute inline-flex h-full w-full rounded-full bg-brand opacity-60" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
+                      </span>
+                    )}
                   </div>
-                  <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-muted">
+                  <div className="mt-2.5 flex flex-wrap items-center gap-2 font-mono text-xs text-muted">
                     <Chip>{exp.contract}</Chip>
-                    {exp.location && <span className="text-muted/70">{exp.location}</span>}
                     <time dateTime={exp.start_date} className="ml-auto">
                       {formatPeriod(exp.start_date, exp.end_date, exp.current)}
                     </time>
                   </div>
-                  {exp.current && (
-                    <span className="mt-2 inline-flex items-center gap-1.5 text-xs text-brand">
-                      <span className="relative flex h-2 w-2" aria-hidden="true">
-                        <span className="ping-soft absolute inline-flex h-full w-full rounded-full bg-brand opacity-60" />
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-                      </span>
-                      En poste
-                    </span>
+                  {exp.location && (
+                    <p className="mt-1 text-xs text-muted/70">{exp.location}</p>
                   )}
+                  <div className="mt-3 border-t border-line" />
                 </header>
 
-                {/* Body */}
-                <div className="mt-4 flex flex-1 flex-col gap-4">
-                  {exp.summary && <p className="text-[0.95rem] text-ink/90">{exp.summary}</p>}
+                {/* Corps scrollable verticalement */}
+                <div className="mt-3 flex-1 overflow-y-auto pr-1" style={{ scrollbarWidth: "none" }}>
+                  {exp.summary && (
+                    <p className="mb-3 text-[0.9rem] text-ink/90">{exp.summary}</p>
+                  )}
                   {exp.highlights.length > 0 && (
-                    <ul className="space-y-2 text-[0.9rem] text-muted">
+                    <ul className="space-y-2 text-[0.875rem] text-muted">
                       {exp.highlights.map((h) => (
-                        <li key={h} className="flex gap-3">
-                          <span aria-hidden="true" className="mt-2 h-1 w-3 shrink-0 rounded-full bg-brand" />
+                        <li key={h} className="flex gap-2.5">
+                          <span aria-hidden="true" className="mt-2 h-1 w-2.5 shrink-0 rounded-full bg-brand" />
                           <span>{h}</span>
                         </li>
                       ))}
                     </ul>
                   )}
-                </div>
-
-                {/* Footer */}
-                <footer className="mt-5 space-y-3">
                   {exp.stack.length > 0 && (
-                    <ul className="flex flex-wrap gap-2" aria-label="Technologies">
+                    <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies">
                       {exp.stack.map((s) => (
                         <li key={s}><Chip>{s}</Chip></li>
                       ))}
                     </ul>
                   )}
-                  {exp.project_slugs.length > 0 && (
+                </div>
+
+                {/* Footer — fixe */}
+                {exp.project_slugs.length > 0 && (
+                  <footer className="mt-3 shrink-0 border-t border-line pt-3">
                     <p className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                       {exp.project_slugs.map((slug) => {
                         const p = projectBySlug.get(slug);
@@ -149,8 +151,8 @@ export function Experience() {
                         ) : null;
                       })}
                     </p>
-                  )}
-                </footer>
+                  </footer>
+                )}
               </article>
             </li>
           ))}
