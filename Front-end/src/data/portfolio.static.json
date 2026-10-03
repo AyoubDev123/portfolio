@@ -2,8 +2,8 @@
   "profile": {
     "first_name": "Ayoub",
     "last_name": "El Abbassi",
-    "headline": "Engineering student in applied mathematics · Data Scientist / Engineer",
-    "tagline": "I design end-to-end data and AI systems: from data ingestion (ETL, SQL and NoSQL databases) to models, RAG chatbots and decision-making dashboards.",
+    "headline": "Engineering student @CY Tech (Ex. EISTI) | Apprentice @Safran Aircraft Engines | AI & Analytics Engineering",
+    "tagline": "Working on applied AI for aeronautics use cases. Experience in Generative AI, ML models, and data solutions. Open for new projects.",
     "about": [
       "Engineering student in applied mathematics at CY Tech (apprenticeship, 2026–2029), I am an apprentice Data Scientist / Engineer at Safran Aircraft Engines.",
       "After a Bachelor of Technology in Data Science at the University of Lille, I have worked across the full data value chain: engineering (ETL, data warehouses, NoSQL), modelling (statistical, machine learning, deep learning) and reporting (BI, data visualisation).",
@@ -11,57 +11,31 @@
     ],
     "status_label": "Apprentice Data Scientist / Engineer · Safran Aircraft Engines",
     "email": "ayoub.elabbassi05@gmail.com",
-    "city": "Île-de-France · open to relocation in France",
+    "city": "Paris & surroundings · Paris et périphérie",
     "linkedin": "",
     "github": "",
     "photo": "/images/profile.webp",
     "cv_url": "/cv/CV_Ayoub_El_Abbassi.pdf",
     "languages": [
-      {
-        "name": "French",
-        "level": "Native/Bilingual"
-      },
-      {
-        "name": "English",
-        "level": "C1 (EF SET)"
-      },
-      {
-        "name": "Arabic",
-        "level": "Native"
-      }
+      { "name": "French", "level": "Native/Bilingual" },
+      { "name": "English", "level": "C1 (EF SET)" },
+      { "name": "Arabic", "level": "Native" }
     ],
-    "metrics": [
-      {
-        "value": "+20 M",
-        "label": "data rows processed on the land value project"
-      },
-      {
-        "value": "+800 K",
-        "label": "lines of French law encoded for the legal RAG"
-      },
-      {
-        "value": "+60 %",
-        "label": "accuracy gain with CamemBERT in the embeddings benchmark"
-      },
-      {
-        "value": "2nd",
-        "label": "place at the DataViz Hackathon Enedis × Météo-France (2024)"
-      }
-    ],
+    "metrics": [],
     "id": 1
   },
   "experiences": [
     {
       "slug": "safran",
       "company": "Safran Aircraft Engines",
-      "role": "Data Scientist / Engineer",
+      "role": "Data Scientist - Engineering Support & Services",
       "contract": "Apprenticeship",
-      "location": "Seine-et-Marne (77)",
-      "start_date": "2026-09-14",
+      "location": "Montereau-sur-le-Jard, Île-de-France, France",
+      "start_date": "2026-09-01",
       "end_date": null,
-      "summary": "Three-year apprenticeship, run alongside the engineering programme at CY Tech.",
+      "summary": "Working as data scientist / data engineer / data steward within the Engineering Support & Services division.",
       "highlights": [
-        "Apprenticeship 2026–2029, alternating weeks between company and school."
+        "Missions as data scientist, data engineer and data steward."
       ],
       "stack": [],
       "position": 0,
@@ -72,61 +46,46 @@
     {
       "slug": "renault",
       "company": "Renault Group",
-      "role": "AI Developer",
+      "role": "Data & AI Developer – Supply Chain Inbound",
       "contract": "Internship",
-      "location": "",
+      "location": "Guyancourt · Hybride",
       "start_date": "2026-03-01",
-      "end_date": "2026-07-31",
-      "summary": "Development of internal chatbots for the supply chain.",
+      "end_date": "2026-06-30",
+      "summary": "Developed Supply Chain chatbots in an enterprise environment and built ML models for price prediction of logistics flows.",
       "highlights": [
-        "Corpus building: converting Excel files to JSON with VBA.",
-        "Indexing: SharePoint connection and OpenAI text-embedding-3-large embeddings.",
-        "Prompt engineering across multiple LLMs (Gemini, GPT, Mistral)."
+        "Developed Supply Chain chatbots in an enterprise environment (Copilot Studio)",
+        "Built Machine Learning models for price prediction of logistics flows (Dataiku / Python, data preprocessing, regression models)",
+        "Conducted statistical and econometric modeling to analyze and interpret cost structures (Dataiku / Python)",
+        "Developed POCs for data visualization of logistics flows and networks (Python / Spotfire)",
+        "Automated data processing and performed data analysis using Excel (Office Scripts, VBA)"
       ],
-      "stack": [
-        "VBA",
-        "JSON",
-        "SharePoint",
-        "OpenAI Embeddings",
-        "Gemini",
-        "GPT",
-        "Mistral"
-      ],
+      "stack": ["Copilot Studio", "Dataiku", "Python", "Spotfire", "Office Scripts", "VBA"],
       "position": 1,
       "id": 2,
       "current": false,
-      "project_slugs": [
-        "chatbots-supply-chain"
-      ]
+      "project_slugs": ["chatbots-supply-chain"]
     },
     {
       "slug": "inventiv-it",
       "company": "Inventiv IT",
-      "role": "R&D Data / AI Consultant",
+      "role": "Data & AI Consultant - R&D",
       "contract": "Internship",
-      "location": "",
+      "location": "Levallois-Perret, Île-de-France, France · Hybride",
       "start_date": "2025-04-01",
-      "end_date": "2025-07-31",
-      "summary": "Development of a legal RAG chatbot for lawyers.",
+      "end_date": "2025-06-30",
+      "summary": "AI – Development of a POC for a RAG Legal Chatbot.",
       "highlights": [
-        "NLP and vectorisation: encoding French law (+800K lines) and benchmarking embedding models (CamemBERT, +60% accuracy).",
-        "Semantic search: implementation of a FAISS vector index.",
-        "LLM: prompt engineering with Gemini.",
-        "Interface: interactive UI with Gradio."
+        "Data sourcing and legal document retrieval",
+        "Feature selection and text preprocessing for NLP tasks",
+        "Embedding and LLM/model selection (CamemBERT, Mistral, Gemini)",
+        "Vector indexing and retrieval pipeline implementation (FAISS)",
+        "Gradio interface for chatbot testing and evaluation"
       ],
-      "stack": [
-        "Python",
-        "CamemBERT",
-        "FAISS",
-        "Gemini",
-        "Gradio"
-      ],
+      "stack": ["Python", "CamemBERT", "FAISS", "Gemini", "Mistral", "Gradio"],
       "position": 2,
       "id": 3,
       "current": false,
-      "project_slugs": [
-        "rag-juridique"
-      ]
+      "project_slugs": ["rag-juridique"]
     }
   ],
   "projects": [
@@ -148,49 +107,17 @@
         "Statistical vs machine learning vs deep learning",
         "Prediction interpretability with SHAP"
       ],
-      "stack": [
-        "Python",
-        "SQL",
-        "ETL",
-        "Datawarehouse",
-        "NoSQL",
-        "Power BI",
-        "SHAP"
-      ],
-      "tags": [
-        "Data Engineering",
-        "Machine Learning",
-        "BI & DataViz"
-      ],
+      "stack": ["Python", "SQL", "ETL", "Datawarehouse", "NoSQL", "Power BI", "SHAP"],
+      "tags": ["Data Engineering", "Machine Learning", "BI & DataViz"],
       "images": [
-        {
-          "src": "/images/projets/dataviz.webp",
-          "alt": "Land value dashboard: number of sales, price per m², map and value by municipality",
-          "caption": "Overview: sales map, price per m² by year, land value by municipality"
-        },
-        {
-          "src": "/images/projets/dataviz4.webp",
-          "alt": "Second dark dashboard: maps of France showing average price per m² and sales volume, trends and top municipalities",
-          "caption": "Second dashboard: maps by département, volume trends, top municipalities"
-        },
-        {
-          "src": "/images/projets/dataviz2.webp",
-          "alt": "Table and charts of price per m² and land value by region",
-          "caption": "Price per m² and land value by region"
-        },
-        {
-          "src": "/images/projets/dataviz3.webp",
-          "alt": "Breakdown of land value by transfer type and number of sales by number of rooms",
-          "caption": "Breakdown by transfer type and number of rooms"
-        },
-        {
-          "src": "/images/projets/shap.webp",
-          "alt": "SHAP chart showing the impact of variables on price",
-          "caption": "SHAP analysis: variable impact on price (2,000 properties)"
-        }
+        { "src": "/images/projets/dataviz.webp", "alt": "Land value dashboard", "caption": "Overview: sales map, price per m² by year, land value by municipality" },
+        { "src": "/images/projets/dataviz4.webp", "alt": "Second dark dashboard", "caption": "Second dashboard: maps by département, volume trends, top municipalities" },
+        { "src": "/images/projets/dataviz2.webp", "alt": "Price per m² by region", "caption": "Price per m² and land value by region" },
+        { "src": "/images/projets/dataviz3.webp", "alt": "Breakdown by transfer type", "caption": "Breakdown by transfer type and number of rooms" },
+        { "src": "/images/projets/shap.webp", "alt": "SHAP chart", "caption": "SHAP analysis: variable impact on price (2,000 properties)" }
       ],
       "links": [],
-      "featured": true,
+      "featured": false,
       "position": 0,
       "experience_id": null,
       "id": 1,
@@ -212,25 +139,13 @@
         "Deployed in an interactive Gradio interface",
         "Explainable decisions: variable impact via SHAP"
       ],
-      "stack": [
-        "Python",
-        "Machine Learning",
-        "SHAP",
-        "Gradio"
-      ],
-      "tags": [
-        "Machine Learning",
-        "AI"
-      ],
+      "stack": ["Python", "Machine Learning", "SHAP", "Gradio"],
+      "tags": ["Machine Learning", "AI"],
       "images": [
-        {
-          "src": "/images/projets/sellami.webp",
-          "alt": "Credit simulator with decision and SHAP chart",
-          "caption": "Simulator: decision and SHAP explanation"
-        }
+        { "src": "/images/projets/sellami.webp", "alt": "Credit simulator", "caption": "Simulator: decision and SHAP explanation" }
       ],
       "links": [],
-      "featured": true,
+      "featured": false,
       "position": 1,
       "experience_id": null,
       "id": 2,
@@ -240,7 +155,7 @@
       "slug": "rag-juridique",
       "title": "Legal RAG Chatbot for Lawyers",
       "subtitle": "Semantic search over French law",
-      "period": "Apr. – Jul. 2025",
+      "period": "Apr. – Jun. 2025",
       "context": "Internship · Inventiv IT (R&D)",
       "summary": "A RAG assistant that retrieves relevant passages from French law via semantic search before having an LLM generate the answer.",
       "description": [
@@ -253,26 +168,13 @@
         "FAISS vector index for semantic search",
         "Prompt engineering (Gemini) and Gradio interface"
       ],
-      "stack": [
-        "Python",
-        "CamemBERT",
-        "FAISS",
-        "Gemini",
-        "Gradio"
-      ],
-      "tags": [
-        "AI & LLM",
-        "NLP"
-      ],
+      "stack": ["Python", "CamemBERT", "FAISS", "Gemini", "Mistral", "Gradio"],
+      "tags": ["AI & LLM", "NLP"],
       "images": [
-        {
-          "src": "/images/projets/rag-juridique.svg",
-          "alt": "Pipeline diagram: French law is encoded with CamemBERT and indexed in FAISS; a question is searched in the index then sent to Gemini, and the answer appears in Gradio.",
-          "caption": "Simplified pipeline: indexing French law, then querying"
-        }
+        { "src": "/images/projets/rag-juridique.svg", "alt": "RAG pipeline diagram", "caption": "Simplified pipeline: indexing French law, then querying" }
       ],
       "links": [],
-      "featured": true,
+      "featured": false,
       "position": 2,
       "experience_id": 3,
       "id": 3,
@@ -282,7 +184,7 @@
       "slug": "chatbots-supply-chain",
       "title": "Internal Supply Chain Chatbots",
       "subtitle": "RAG over SharePoint documents for inbound supply chain",
-      "period": "Mar. – Jul. 2026",
+      "period": "Mar. – Jun. 2026",
       "context": "Internship · Renault Group",
       "summary": "Internal chatbots powered by a corpus built from Excel files and SharePoint, queryable via multiple LLMs.",
       "description": [
@@ -294,28 +196,13 @@
         "Indexing from SharePoint, text-embedding-3-large",
         "Multi-LLM prompt engineering: Gemini, GPT, Mistral"
       ],
-      "stack": [
-        "VBA",
-        "JSON",
-        "SharePoint",
-        "OpenAI Embeddings",
-        "Gemini",
-        "GPT",
-        "Mistral"
-      ],
-      "tags": [
-        "AI & LLM",
-        "Data Engineering"
-      ],
+      "stack": ["VBA", "JSON", "SharePoint", "OpenAI Embeddings", "Gemini", "GPT", "Mistral"],
+      "tags": ["AI & LLM", "Data Engineering"],
       "images": [
-        {
-          "src": "/images/projets/chatbots-supply-chain.svg",
-          "alt": "Pipeline diagram: Excel files are converted to JSON with VBA, indexed from SharePoint with text-embedding-3-large; a question is searched in the index then sent to Gemini, GPT or Mistral.",
-          "caption": "Simplified pipeline: corpus preparation, then querying"
-        }
+        { "src": "/images/projets/chatbots-supply-chain.svg", "alt": "Supply chain chatbot pipeline", "caption": "Simplified pipeline: corpus preparation, then querying" }
       ],
       "links": [],
-      "featured": true,
+      "featured": false,
       "position": 3,
       "experience_id": 2,
       "id": 4,
@@ -336,20 +223,10 @@
         "Moving from a relational schema to a document model",
         "Graph modelling with Neo4j"
       ],
-      "stack": [
-        "SQLite",
-        "MongoDB",
-        "Neo4j"
-      ],
-      "tags": [
-        "Data Engineering"
-      ],
+      "stack": ["SQLite", "MongoDB", "Neo4j"],
+      "tags": ["Data Engineering"],
       "images": [
-        {
-          "src": "/images/projets/neo4j.webp",
-          "alt": "Neo4j graph of nodes and relationships",
-          "caption": "Graph visualisation in Neo4j"
-        }
+        { "src": "/images/projets/neo4j.webp", "alt": "Neo4j graph", "caption": "Graph visualisation in Neo4j" }
       ],
       "links": [],
       "featured": false,
@@ -367,29 +244,16 @@
       "summary": "v1 (PHP/MySQL, defended on 10/02/2026) was rebuilt as a decoupled architecture: a tested FastAPI back-end and a React/TypeScript front end.",
       "description": [
         "Version 1 (defended on 10/02/2026): PHP/MySQL site with MCD/MLD modelling, CRUD back-office, filters and project pages, built over four months with generative AI tools (Claude Code, Gemini).",
-        "Version 2, what you're viewing now: a REST FastAPI API (SQLAlchemy, JWT, pytest tests) and a React/TypeScript front end, containerised with Docker and verified by GitHub Actions CI. If the API is unavailable, the front end falls back to a static export of the same content."
+        "Version 2, what you're viewing now: a REST FastAPI API (SQLAlchemy, JWT, pytest tests) and a React/TypeScript front end, containerised with Docker and verified by GitHub Actions CI."
       ],
       "highlights": [
         "Typed REST API: FastAPI and Pydantic v2",
-        "JWT auth, rate limiting, anti-spam honeypot field",
+        "HttpOnly cookie auth, rate limiting, token revocation",
         "Automated pytest tests and GitHub Actions CI",
         "Responsive, accessible front end with light and dark themes"
       ],
-      "stack": [
-        "React",
-        "TypeScript",
-        "Vite",
-        "Tailwind CSS",
-        "FastAPI",
-        "SQLAlchemy",
-        "SQLite",
-        "Docker",
-        "GitHub Actions",
-        "pytest"
-      ],
-      "tags": [
-        "Web Development"
-      ],
+      "stack": ["React", "TypeScript", "Vite", "Tailwind CSS", "FastAPI", "SQLAlchemy", "SQLite", "Docker", "GitHub Actions", "pytest"],
+      "tags": ["Web Development"],
       "images": [],
       "links": [],
       "featured": false,
@@ -399,110 +263,30 @@
       "experience_slug": null
     }
   ],
-  "skill_groups": [
-    {
-      "name": "Programming",
-      "items": [
-        "Python",
-        "R",
-        "SQL",
-        "VBA",
-        "SAS",
-        "PHP",
-        "JavaScript",
-        "HTML/CSS",
-        "Linux"
-      ],
-      "position": 0,
-      "id": 1
-    },
-    {
-      "name": "AI & LLM",
-      "items": [
-        "RAG",
-        "Prompt engineering",
-        "Gemini",
-        "GPT",
-        "Mistral",
-        "CamemBERT",
-        "FAISS",
-        "SHAP",
-        "Gradio"
-      ],
-      "position": 1,
-      "id": 2
-    },
-    {
-      "name": "Databases",
-      "items": [
-        "Oracle",
-        "SQL Server",
-        "MongoDB",
-        "Neo4j",
-        "Cassandra",
-        "BigQuery"
-      ],
-      "position": 2,
-      "id": 3
-    },
-    {
-      "name": "ETL",
-      "items": [
-        "SSIS",
-        "ODI",
-        "Python"
-      ],
-      "position": 3,
-      "id": 4
-    },
-    {
-      "name": "Business Intelligence",
-      "items": [
-        "Power BI",
-        "Qlik Sense",
-        "Business Objects",
-        "D3.js"
-      ],
-      "position": 4,
-      "id": 5
-    },
-    {
-      "name": "Software Development",
-      "items": [
-        "FastAPI",
-        "React",
-        "TypeScript",
-        "Docker",
-        "Git",
-        "GitHub Actions"
-      ],
-      "position": 5,
-      "id": 6
-    }
-  ],
+  "skill_groups": [],
   "education": [
     {
       "school": "CY Tech",
-      "degree": "Engineering student (Apprenticeship) · Applied Mathematics and Computer Science",
-      "description": "Engineering school focused on applied mathematics, data and AI.",
+      "degree": "Master of Engineering (MEng), Applied Mathematics",
+      "description": "First year. Focus on Applied Mathematics and Data Science.",
       "start_year": 2026,
       "end_year": 2029,
       "position": 0,
       "id": 1
     },
     {
-      "school": "University of Lille",
-      "degree": "Bachelor of Technology in Data Science · Visualisation and Decision Support Tools",
-      "description": "Statistics, Big Data, artificial intelligence, Business Intelligence and data engineering.",
+      "school": "Université de Lille",
+      "degree": "Bachelor of Technology (BSc), Data Science",
+      "description": "Graduated with Honours · 3.7 GPA. Focus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design. Core Courses: Statistics, Big Data, AI, BI, Data Engineering. Activities: Hackathon, surveys, seminar organization.",
       "start_year": 2023,
       "end_year": 2026,
       "position": 1,
       "id": 2
     },
     {
-      "school": "Lycée En-nour 1",
-      "degree": "High School Diploma in Physics-Chemistry · Highest Honour (Très Bien)",
-      "description": "Mathematics, physics-chemistry, philosophy. Maths tutoring, theatre and trip organisation.",
+      "school": "En-nour 1 High School",
+      "degree": "Scientific Baccalaureate, Physics and Chemistry Track",
+      "description": "Graduated with Highest Honors. Core Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography. Activities: Travel organization, Mathematics tutoring, association internship, theater.",
       "start_year": 2020,
       "end_year": 2023,
       "position": 2,
@@ -511,81 +295,53 @@
   ],
   "certifications": [
     {
+      "name": "EF SET English Certificate 62/100 (C1 Advanced)",
+      "issuer": "EF SET",
+      "date_label": "February 2026",
+      "kind": "certification",
+      "position": 0,
+      "id": 1
+    },
+    {
+      "name": "MOOC L'Atelier RGPD",
+      "issuer": "CNIL",
+      "date_label": "January 2025",
+      "kind": "certification",
+      "position": 1,
+      "id": 2
+    },
+    {
+      "name": "Learning AI Through Visualization",
+      "issuer": "Columbia+",
+      "date_label": "October 2025",
+      "kind": "certification",
+      "position": 2,
+      "id": 3
+    },
+    {
+      "name": "Academy Accreditation - Databricks Fundamentals",
+      "issuer": "Databricks",
+      "date_label": "June 2025",
+      "kind": "certification",
+      "position": 3,
+      "id": 4
+    },
+    {
+      "name": "Academy Accreditation - Generative AI Fundamentals",
+      "issuer": "Databricks",
+      "date_label": "April 2025",
+      "kind": "certification",
+      "position": 4,
+      "id": 5
+    },
+    {
       "name": "DataViz Hackathon · 2nd place",
       "issuer": "Enedis, Météo-France and IUT de Lille",
       "date_label": "May 2024",
       "kind": "distinction",
-      "position": 0,
-      "id": 1
-    },
-    {
-      "name": "Learning AI Through Visualization",
-      "issuer": "Columbia University",
-      "date_label": "October 2025",
-      "kind": "certification",
-      "position": 1,
-      "id": 2
-    },
-    {
-      "name": "Databricks Fundamentals",
-      "issuer": "Databricks Academy",
-      "date_label": "June 2025",
-      "kind": "certification",
-      "position": 2,
-      "id": 3
-    },
-    {
-      "name": "Generative AI Fundamentals",
-      "issuer": "Databricks Academy",
-      "date_label": "April 2025",
-      "kind": "certification",
-      "position": 3,
-      "id": 4
-    },
-    {
-      "name": "GDPR Workshop (MOOC)",
-      "issuer": "CNIL",
-      "date_label": "January 2025",
-      "kind": "certification",
-      "position": 4,
-      "id": 5
+      "position": 5,
+      "id": 6
     }
   ],
-  "interests": [
-    {
-      "title": "Surveys & Research",
-      "description": "Conducting surveys and investigations.",
-      "icon": "clipboard-list",
-      "position": 0,
-      "id": 1
-    },
-    {
-      "title": "Seminar Organisation",
-      "description": "Organising seminars and events.",
-      "icon": "calendar-days",
-      "position": 1,
-      "id": 2
-    },
-    {
-      "title": "Maths Tutoring",
-      "description": "Tutoring students in mathematics.",
-      "icon": "graduation-cap",
-      "position": 2,
-      "id": 3
-    },
-    {
-      "title": "Theatre",
-      "description": "Theatre practitioner.",
-      "icon": "drama",
-      "position": 3,
-      "id": 4
-    },
-    {
-      "title": "Video Games",
-      "description": "Former national team player.",
-      "icon": "gamepad-2",
-      "position": 4,
-      "id": 5
-    }
-  ]
+  "interests": []
 }
