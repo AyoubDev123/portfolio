@@ -24,13 +24,15 @@ export function Education() {
       gsap.from(cards, {
         y: 20,
         opacity: 0,
-        duration: 0.5,
+        duration: 0.45,
         ease: "power2.out",
-        stagger: 0.09,
+        stagger: 0.08,
+        clearProps: "transform,opacity",
         scrollTrigger: {
           trigger: eduRef.current,
           start: "top 85%",
           toggleActions: "play none none none",
+          once: true,
         },
       });
     },
@@ -44,13 +46,15 @@ export function Education() {
       gsap.from(cards, {
         y: 20,
         opacity: 0,
-        duration: 0.45,
+        duration: 0.4,
         ease: "power2.out",
-        stagger: 0.06,
+        stagger: 0.05,
+        clearProps: "transform,opacity",
         scrollTrigger: {
           trigger: interestRef.current,
           start: "top 88%",
           toggleActions: "play none none none",
+          once: true,
         },
       });
     },

@@ -23,13 +23,15 @@ export function Section({ id, index, eyebrow, title, intro, children }: Props) {
       gsap.from(targets, {
         y: 22,
         opacity: 0,
-        duration: 0.65,
+        duration: 0.55,
         ease: "power2.out",
         stagger: 0.07,
+        clearProps: "transform,opacity",
         scrollTrigger: {
           trigger: el,
           start: "top 88%",
           toggleActions: "play none none none",
+          once: true,
         },
       });
     },

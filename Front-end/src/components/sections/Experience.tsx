@@ -23,13 +23,15 @@ export function Experience() {
       gsap.from(cards, {
         x: 48,
         opacity: 0,
-        duration: 0.55,
+        duration: 0.5,
         ease: "power2.out",
-        stagger: 0.15,
+        stagger: 0.12,
+        clearProps: "transform,opacity",
         scrollTrigger: {
           trigger: trackRef.current,
           start: "top 82%",
           toggleActions: "play none none none",
+          once: true,
         },
       });
     },

@@ -17,13 +17,15 @@ export function Skills() {
       gsap.from(cards, {
         y: 24,
         opacity: 0,
-        duration: 0.55,
+        duration: 0.45,
         ease: "power2.out",
-        stagger: 0.08,
+        stagger: 0.07,
+        clearProps: "transform,opacity",
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: "top 85%",
           toggleActions: "play none none none",
+          once: true,
         },
       });
     },
