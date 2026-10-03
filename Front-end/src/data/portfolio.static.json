@@ -21,7 +21,13 @@
       { "name": "English", "level": "C1 (EF SET)" },
       { "name": "Arabic", "level": "Native" }
     ],
-    "metrics": [],
+    "metrics": [
+      { "value": "Machine Learning", "label": "" },
+      { "value": "Big Data", "label": "" },
+      { "value": "Generative AI", "label": "" },
+      { "value": "Deep Learning", "label": "" },
+      { "value": "Data Engineering", "label": "" }
+    ],
     "id": 1
   },
   "experiences": [

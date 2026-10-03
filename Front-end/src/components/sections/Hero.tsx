@@ -41,14 +41,21 @@ function CountUp({ value }: { value: string }) {
 }
 
 function MetricItem({ m }: { m: Metric }) {
+  const isNumeric = /\d/.test(m.value);
   return (
-    <div className="bg-surface px-5 py-6">
-      <dt className="sr-only">{m.label}</dt>
+    <div className="bg-surface px-5 py-5 flex flex-col justify-center">
+      <dt className="sr-only">{m.label || m.value}</dt>
       <dd>
-        <span className="block font-mono text-3xl font-semibold tracking-tight text-brand sm:text-4xl">
-          <CountUp value={m.value} />
-        </span>
-        <span className="mt-2 block text-sm leading-snug text-muted">{m.label}</span>
+        {isNumeric ? (
+          <span className="block font-mono text-3xl font-semibold tracking-tight text-brand sm:text-4xl">
+            <CountUp value={m.value} />
+          </span>
+        ) : (
+          <span className="block text-base font-semibold tracking-tight text-brand">{m.value}</span>
+        )}
+        {m.label && (
+          <span className="mt-1.5 block text-sm leading-snug text-muted">{m.label}</span>
+        )}
       </dd>
     </div>
   );
@@ -168,7 +175,7 @@ export function Hero() {
       </div>
 
       {profile.metrics.length > 0 && (
-        <dl className="mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4">
+        <dl className="mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
           {profile.metrics.map((m) => (
             <MetricItem key={m.label} m={m} />
           ))}
