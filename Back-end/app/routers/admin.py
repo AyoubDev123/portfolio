@@ -176,6 +176,17 @@ def list_messages(db: Session = Depends(get_db)):
     return db.scalars(select(models.ContactMessage).order_by(models.ContactMessage.id.desc())).all()
 
 
+@router.patch("/messages/{message_id}/read", response_model=schemas.ContactMessageRead)
+def mark_message_read(message_id: int, db: Session = Depends(get_db)):
+    msg = db.get(models.ContactMessage, message_id)
+    if msg is None:
+        raise HTTPException(404, "Introuvable")
+    msg.is_read = True
+    db.commit()
+    db.refresh(msg)
+    return msg
+
+
 @router.delete("/messages/{message_id}", status_code=204)
 def delete_message(message_id: int, db: Session = Depends(get_db)):
     msg = db.get(models.ContactMessage, message_id)

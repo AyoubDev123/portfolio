@@ -9,7 +9,19 @@ filtrées côté SQL pour un portfolio, et l'API reste plus simple.
 
 from datetime import date, datetime
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -19,8 +31,14 @@ class Base(DeclarativeBase):
 
 class Profile(Base):
     __tablename__ = "profile"
+    # Contrainte singleton : une seule ligne autorisée (_singleton doit valoir 1).
+    __table_args__ = (
+        UniqueConstraint("_singleton"),
+        CheckConstraint("_singleton = 1", name="ck_profile_singleton"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    _singleton: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     first_name: Mapped[str] = mapped_column(String(80))
     last_name: Mapped[str] = mapped_column(String(80))
     headline: Mapped[str] = mapped_column(String(200))
@@ -35,6 +53,9 @@ class Profile(Base):
     cv_url: Mapped[str] = mapped_column(String(300), default="")
     languages: Mapped[list] = mapped_column(JSON, default=list)  # [{name, level}]
     metrics: Mapped[list] = mapped_column(JSON, default=list)  # [{value, label}]
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class Experience(Base):
@@ -52,6 +73,9 @@ class Experience(Base):
     highlights: Mapped[list] = mapped_column(JSON, default=list)
     stack: Mapped[list] = mapped_column(JSON, default=list)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     projects: Mapped[list["Project"]] = relationship(back_populates="experience")
 
@@ -75,6 +99,9 @@ class Project(Base):
     featured: Mapped[bool] = mapped_column(Boolean, default=False)
     position: Mapped[int] = mapped_column(Integer, default=0)
     experience_id: Mapped[int | None] = mapped_column(ForeignKey("experience.id", ondelete="SET NULL"), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
     experience: Mapped[Experience | None] = relationship(back_populates="projects")
 
@@ -86,6 +113,9 @@ class SkillGroup(Base):
     name: Mapped[str] = mapped_column(String(120))
     items: Mapped[list] = mapped_column(JSON, default=list)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class Education(Base):
@@ -98,6 +128,9 @@ class Education(Base):
     start_year: Mapped[int] = mapped_column(Integer)
     end_year: Mapped[int] = mapped_column(Integer)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class Certification(Base):
@@ -109,6 +142,9 @@ class Certification(Base):
     date_label: Mapped[str] = mapped_column(String(60))
     kind: Mapped[str] = mapped_column(String(20), default="certification")  # | distinction
     position: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class Interest(Base):
@@ -119,6 +155,9 @@ class Interest(Base):
     description: Mapped[str] = mapped_column(String(300), default="")
     icon: Mapped[str] = mapped_column(String(40), default="sparkles")
     position: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class ContactMessage(Base):
@@ -129,6 +168,7 @@ class ContactMessage(Base):
     email: Mapped[str] = mapped_column(String(200))
     subject: Mapped[str] = mapped_column(String(200))
     message: Mapped[str] = mapped_column(Text)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

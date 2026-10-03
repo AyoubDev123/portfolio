@@ -198,6 +198,7 @@ class ContactMessageRead(ORM):
     email: str
     subject: str
     message: str
+    is_read: bool
     created_at: datetime
 
 
