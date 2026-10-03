@@ -78,7 +78,16 @@ export function Education() {
                   </div>
                 </div>
                 <p className="mt-2 text-muted">{e.degree}</p>
-                {e.description && <p className="mt-3 whitespace-pre-line text-[0.95rem] text-muted">{e.description}</p>}
+                {e.description && (
+                  <ul className="mt-3 space-y-1.5 text-[0.9rem] text-muted">
+                    {e.description.split("\n").map((line) => (
+                      <li key={line} className="flex gap-2.5">
+                        <span aria-hidden="true" className="mt-2 h-1 w-2.5 shrink-0 rounded-full bg-brand" />
+                        <span>{line}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ol>
