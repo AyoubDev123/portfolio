@@ -1,0 +1,24 @@
+# Blueprint Render pour l'API (le front se déploie sur Vercel/Netlify, voir README).
+# Attention : l'offre gratuite a un disque éphémère. Avec SQLite, les modifications faites dans /admin
+# et les messages reçus sont perdus à chaque redéploiement : ajoute une base PostgreSQL (DATABASE_URL).
+services:
+  - type: web
+    name: portfolio-api
+    runtime: docker
+    rootDir: Back-end
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    plan: free
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD # 12 caractères minimum
+        sync: false
+      - key: CORS_ORIGINS # adresse publique du front, ex. https://ayoub-elabbassi.vercel.app
+        sync: false
+      # - key: DATABASE_URL  # chaîne de connexion PostgreSQL (recommandé)
+      #   sync: false

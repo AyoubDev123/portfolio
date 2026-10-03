@@ -1,0 +1,140 @@
+"""Modèle de données.
+
+Évolution du schéma MySQL du portfolio v1 (Profil, Formation, Experience, Projet,
+Competence, Realisation, outils, Certifications, Passion + tables d'association) :
+les tables de liaison many-to-many ont été remplacées par des colonnes JSON (liste
+de technologies, de réalisations…) — ces listes n'ont pas besoin d'être jointes ni
+filtrées côté SQL pour un portfolio, et l'API reste plus simple.
+"""
+
+from datetime import date, datetime
+
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class Profile(Base):
+    __tablename__ = "profile"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(80))
+    last_name: Mapped[str] = mapped_column(String(80))
+    headline: Mapped[str] = mapped_column(String(200))
+    tagline: Mapped[str] = mapped_column(Text)
+    about: Mapped[list] = mapped_column(JSON, default=list)  # paragraphes
+    status_label: Mapped[str] = mapped_column(String(200), default="")
+    email: Mapped[str] = mapped_column(String(200))
+    city: Mapped[str] = mapped_column(String(120), default="")
+    linkedin: Mapped[str] = mapped_column(String(300), default="")
+    github: Mapped[str] = mapped_column(String(300), default="")
+    photo: Mapped[str] = mapped_column(String(300), default="")
+    cv_url: Mapped[str] = mapped_column(String(300), default="")
+    languages: Mapped[list] = mapped_column(JSON, default=list)  # [{name, level}]
+    metrics: Mapped[list] = mapped_column(JSON, default=list)  # [{value, label}]
+
+
+class Experience(Base):
+    __tablename__ = "experience"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    company: Mapped[str] = mapped_column(String(120))
+    role: Mapped[str] = mapped_column(String(160))
+    contract: Mapped[str] = mapped_column(String(60))  # Alternance, Stage…
+    location: Mapped[str] = mapped_column(String(120), default="")
+    start_date: Mapped[date] = mapped_column(Date)
+    end_date: Mapped[date | None] = mapped_column(Date, nullable=True)  # None = en cours
+    summary: Mapped[str] = mapped_column(Text, default="")
+    highlights: Mapped[list] = mapped_column(JSON, default=list)
+    stack: Mapped[list] = mapped_column(JSON, default=list)
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+    projects: Mapped[list["Project"]] = relationship(back_populates="experience")
+
+
+class Project(Base):
+    __tablename__ = "project"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    title: Mapped[str] = mapped_column(String(160))
+    subtitle: Mapped[str] = mapped_column(String(240), default="")
+    period: Mapped[str] = mapped_column(String(80), default="")
+    context: Mapped[str] = mapped_column(String(160), default="")  # cadre : BUT, stage…
+    summary: Mapped[str] = mapped_column(Text, default="")
+    description: Mapped[list] = mapped_column(JSON, default=list)  # paragraphes
+    highlights: Mapped[list] = mapped_column(JSON, default=list)
+    stack: Mapped[list] = mapped_column(JSON, default=list)
+    tags: Mapped[list] = mapped_column(JSON, default=list)
+    images: Mapped[list] = mapped_column(JSON, default=list)  # [{src, alt, caption}]
+    links: Mapped[list] = mapped_column(JSON, default=list)  # [{label, url}]
+    featured: Mapped[bool] = mapped_column(Boolean, default=False)
+    position: Mapped[int] = mapped_column(Integer, default=0)
+    experience_id: Mapped[int | None] = mapped_column(ForeignKey("experience.id", ondelete="SET NULL"), nullable=True)
+
+    experience: Mapped[Experience | None] = relationship(back_populates="projects")
+
+
+class SkillGroup(Base):
+    __tablename__ = "skill_group"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120))
+    items: Mapped[list] = mapped_column(JSON, default=list)
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Education(Base):
+    __tablename__ = "education"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    school: Mapped[str] = mapped_column(String(160))
+    degree: Mapped[str] = mapped_column(String(200))
+    description: Mapped[str] = mapped_column(Text, default="")
+    start_year: Mapped[int] = mapped_column(Integer)
+    end_year: Mapped[int] = mapped_column(Integer)
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Certification(Base):
+    __tablename__ = "certification"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(200))
+    issuer: Mapped[str] = mapped_column(String(160))
+    date_label: Mapped[str] = mapped_column(String(60))
+    kind: Mapped[str] = mapped_column(String(20), default="certification")  # | distinction
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class Interest(Base):
+    __tablename__ = "interest"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(120))
+    description: Mapped[str] = mapped_column(String(300), default="")
+    icon: Mapped[str] = mapped_column(String(40), default="sparkles")
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ContactMessage(Base):
+    __tablename__ = "contact_message"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120))
+    email: Mapped[str] = mapped_column(String(200))
+    subject: Mapped[str] = mapped_column(String(200))
+    message: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AdminUser(Base):
+    __tablename__ = "admin_user"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(200))

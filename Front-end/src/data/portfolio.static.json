@@ -1,0 +1,591 @@
+{
+  "profile": {
+    "first_name": "Ayoub",
+    "last_name": "El Abbassi",
+    "headline": "Apprenti ingénieur en mathématiques appliquées · Data Scientist / Engineer",
+    "tagline": "Je conçois des systèmes data et IA de bout en bout : de l'ingestion des données (ETL, bases SQL et NoSQL) aux modèles, aux chatbots RAG et aux tableaux de bord décisionnels.",
+    "about": [
+      "Élève-ingénieur en mathématiques appliquées à CY Tech (en apprentissage, 2026-2029), je suis alternant Data Scientist / Engineer chez Safran Aircraft Engines.",
+      "Passé par un BUT Science des Données à l'Université de Lille, j'ai travaillé sur toute la chaîne de valeur de la donnée : ingénierie (ETL, entrepôts, NoSQL), modélisation (statistique, machine learning, deep learning) et restitution (BI, dataviz).",
+      "Mes stages chez Inventiv IT (chatbot RAG juridique) puis chez Renault Group (chatbots pour la supply chain) m'ont donné une expérience concrète des LLM, de la recherche sémantique et du prompt engineering."
+    ],
+    "status_label": "Alternant Data Scientist / Engineer · Safran Aircraft Engines",
+    "email": "ayoub.elabbassi05@gmail.com",
+    "city": "Île-de-France · mobilité France",
+    "linkedin": "",
+    "github": "",
+    "photo": "/images/profile.webp",
+    "cv_url": "/cv/CV_Ayoub_El_Abbassi.pdf",
+    "languages": [
+      {
+        "name": "Français",
+        "level": "Bilingue"
+      },
+      {
+        "name": "Anglais",
+        "level": "C1 (EF SET)"
+      },
+      {
+        "name": "Arabe",
+        "level": "Langue maternelle"
+      }
+    ],
+    "metrics": [
+      {
+        "value": "+20 M",
+        "label": "lignes de données traitées sur le projet valeur foncière"
+      },
+      {
+        "value": "+800 K",
+        "label": "lignes de droit français encodées pour le RAG juridique"
+      },
+      {
+        "value": "+60 %",
+        "label": "de précision avec CamemBERT au benchmark d'embeddings"
+      },
+      {
+        "value": "2e",
+        "label": "place au Hackathon DataViz Enedis × Météo-France (2024)"
+      }
+    ],
+    "id": 1
+  },
+  "experiences": [
+    {
+      "slug": "safran",
+      "company": "Safran Aircraft Engines",
+      "role": "Data Scientist / Engineer",
+      "contract": "Alternance",
+      "location": "Seine-et-Marne (77)",
+      "start_date": "2026-09-14",
+      "end_date": null,
+      "summary": "Alternance de trois ans, menée en parallèle du cycle ingénieur à CY Tech.",
+      "highlights": [
+        "Alternance 2026-2029 au rythme de blocs de semaines entreprise / école."
+      ],
+      "stack": [],
+      "position": 0,
+      "id": 1,
+      "current": true,
+      "project_slugs": []
+    },
+    {
+      "slug": "renault",
+      "company": "Renault Group",
+      "role": "Développeur IA",
+      "contract": "Stage",
+      "location": "",
+      "start_date": "2026-03-01",
+      "end_date": "2026-07-31",
+      "summary": "Développement de chatbots internes pour la supply chain.",
+      "highlights": [
+        "Construction du corpus : conversion de fichiers Excel en JSON avec VBA.",
+        "Indexation : connexion à SharePoint et embeddings text-embedding-3-large d'OpenAI.",
+        "Prompt engineering sur plusieurs LLM (Gemini, GPT, Mistral)."
+      ],
+      "stack": [
+        "VBA",
+        "JSON",
+        "SharePoint",
+        "OpenAI Embeddings",
+        "Gemini",
+        "GPT",
+        "Mistral"
+      ],
+      "position": 1,
+      "id": 2,
+      "current": false,
+      "project_slugs": [
+        "chatbots-supply-chain"
+      ]
+    },
+    {
+      "slug": "inventiv-it",
+      "company": "Inventiv IT",
+      "role": "Consultant R&D Data / IA",
+      "contract": "Stage",
+      "location": "",
+      "start_date": "2025-04-01",
+      "end_date": "2025-07-31",
+      "summary": "Développement d'un chatbot RAG juridique destiné aux avocats.",
+      "highlights": [
+        "NLP et vectorisation : encodage du droit français (+800 K lignes) et benchmark de modèles d'embeddings (CamemBERT, +60 % de précision).",
+        "Recherche sémantique : implémentation d'un index vectoriel FAISS.",
+        "LLM : prompt engineering avec Gemini.",
+        "Interface : UI interactive sous Gradio."
+      ],
+      "stack": [
+        "Python",
+        "CamemBERT",
+        "FAISS",
+        "Gemini",
+        "Gradio"
+      ],
+      "position": 2,
+      "id": 3,
+      "current": false,
+      "project_slugs": [
+        "rag-juridique"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "slug": "valeur-fonciere",
+      "title": "Prédiction de la valeur foncière",
+      "subtitle": "Outil décisionnel, modélisation statistique et IA sur plus de 20 millions de lignes",
+      "period": "sept. 2025 – févr. 2026",
+      "context": "BUT Science des Données · Université de Lille",
+      "summary": "Du data engineering à la restitution : un pipeline sur +20 M de transactions, trois familles de modèles comparées et un tableau de bord décisionnel.",
+      "description": [
+        "Projet de bout en bout autour des transactions immobilières : ingénierie des données sur plus de 20 millions de lignes, puis modélisation pour prédire la valeur foncière.",
+        "Côté data engineering, mise en place d'un processus ETL alimentant un datawarehouse et une couche NoSQL. Côté modélisation, comparaison de trois approches : statistique, machine learning et deep learning.",
+        "Les résultats sont restitués dans un tableau de bord (nombre de ventes, prix au m², valeur foncière totale par commune) et une analyse SHAP sur 2 000 biens éclaire l'impact de chaque variable sur le prix."
+      ],
+      "highlights": [
+        "+20 M de lignes traitées",
+        "Chaîne ETL, datawarehouse et NoSQL",
+        "Statistique vs machine learning vs deep learning",
+        "Interprétabilité des prédictions avec SHAP"
+      ],
+      "stack": [
+        "Python",
+        "SQL",
+        "ETL",
+        "Datawarehouse",
+        "NoSQL",
+        "Power BI",
+        "SHAP"
+      ],
+      "tags": [
+        "Data Engineering",
+        "Machine Learning",
+        "BI & DataViz"
+      ],
+      "images": [
+        {
+          "src": "/images/projets/dataviz.webp",
+          "alt": "Tableau de bord de la valeur foncière : nombre de ventes, prix au m², carte et valeur par commune",
+          "caption": "Vue d'ensemble : carte des ventes, prix au m² par année, valeur foncière par commune"
+        },
+        {
+          "src": "/images/projets/dataviz4.webp",
+          "alt": "Second tableau de bord sombre : cartes de France du prix moyen au m² et du volume de ventes, évolution et top communes",
+          "caption": "Second tableau de bord : cartes par département, évolution des volumes, top communes"
+        },
+        {
+          "src": "/images/projets/dataviz2.webp",
+          "alt": "Tableau et graphiques du prix au m² et de la valeur foncière par région",
+          "caption": "Prix au m² et valeur foncière par région"
+        },
+        {
+          "src": "/images/projets/dataviz3.webp",
+          "alt": "Répartition de la valeur foncière par nature de mutation et nombre de ventes par nombre de pièces",
+          "caption": "Répartition par nature de mutation et par nombre de pièces"
+        },
+        {
+          "src": "/images/projets/shap.webp",
+          "alt": "Graphique SHAP de l'impact des variables sur le prix",
+          "caption": "Analyse SHAP : impact des variables sur le prix (2 000 biens)"
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "position": 0,
+      "experience_id": null,
+      "id": 1,
+      "experience_slug": null
+    },
+    {
+      "slug": "scoring-credit",
+      "title": "Scoring de crédit et déploiement",
+      "subtitle": "Des modèles de machine learning expliqués avec SHAP, dans un simulateur interactif",
+      "period": "nov. – déc. 2025",
+      "context": "BUT Science des Données · Data mining",
+      "summary": "Un processus de data mining complet, de l'entraînement des modèles au déploiement d'un simulateur qui explique chacune de ses décisions.",
+      "description": [
+        "Mise en place d'un processus de data mining complet : entraînement de modèles de machine learning pour le scoring de crédit, puis déploiement dans un simulateur interactif.",
+        "Le simulateur prend six variables clés (dette restante, taux d'intérêt, mix crédit, revenu annuel, retard moyen, taux d'utilisation du crédit) et affiche la décision accompagnée d'un graphique SHAP qui montre le poids de chaque variable dans la décision."
+      ],
+      "highlights": [
+        "Entraînement de modèles de machine learning pour le scoring",
+        "Déploiement dans une interface interactive Gradio",
+        "Décision explicable : impact de chaque variable via SHAP"
+      ],
+      "stack": [
+        "Python",
+        "Machine Learning",
+        "SHAP",
+        "Gradio"
+      ],
+      "tags": [
+        "Machine Learning",
+        "IA"
+      ],
+      "images": [
+        {
+          "src": "/images/projets/sellami.webp",
+          "alt": "Simulateur de crédit avec la décision et le graphique SHAP",
+          "caption": "Simulateur : décision et explication SHAP"
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "position": 1,
+      "experience_id": null,
+      "id": 2,
+      "experience_slug": null
+    },
+    {
+      "slug": "rag-juridique",
+      "title": "Chatbot RAG juridique pour les avocats",
+      "subtitle": "Recherche sémantique sur le droit français",
+      "period": "avr. – juil. 2025",
+      "context": "Stage · Inventiv IT (R&D)",
+      "summary": "Un assistant RAG qui retrouve les textes pertinents du droit français par recherche sémantique avant de faire répondre un LLM.",
+      "description": [
+        "Conception d'un chatbot RAG (Retrieval-Augmented Generation) pour des avocats : la question est vectorisée, les passages de loi les plus proches sont retrouvés dans un index, puis fournis comme contexte à un LLM.",
+        "Un benchmark de modèles d'embeddings a été mené, avec CamemBERT à +60 % de précision. L'ensemble est exposé via une interface Gradio."
+      ],
+      "highlights": [
+        "Encodage de +800 K lignes de droit français",
+        "Benchmark d'embeddings : CamemBERT, +60 % de précision",
+        "Index vectoriel FAISS pour la recherche sémantique",
+        "Prompt engineering (Gemini) et interface Gradio"
+      ],
+      "stack": [
+        "Python",
+        "CamemBERT",
+        "FAISS",
+        "Gemini",
+        "Gradio"
+      ],
+      "tags": [
+        "IA & LLM",
+        "NLP"
+      ],
+      "images": [
+        {
+          "src": "/images/projets/rag-juridique.svg",
+          "alt": "Schéma du pipeline : le droit français est encodé avec CamemBERT et indexé dans FAISS ; une question est recherchée dans l'index puis transmise à Gemini, et la réponse s'affiche dans Gradio.",
+          "caption": "Pipeline simplifié : indexation du droit français, puis interrogation"
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "position": 2,
+      "experience_id": 3,
+      "id": 3,
+      "experience_slug": "inventiv-it"
+    },
+    {
+      "slug": "chatbots-supply-chain",
+      "title": "Chatbots internes pour la supply chain",
+      "subtitle": "RAG sur documents SharePoint pour l'inbound supply chain",
+      "period": "mars – juil. 2026",
+      "context": "Stage · Renault Group",
+      "summary": "Des chatbots internes alimentés par un corpus construit à partir de fichiers Excel et de SharePoint, interrogeables via plusieurs LLM.",
+      "description": [
+        "Développement de chatbots internes destinés à la supply chain. Le corpus est construit en convertissant des fichiers Excel en JSON avec VBA, puis indexé depuis SharePoint avec le modèle d'embeddings text-embedding-3-large d'OpenAI.",
+        "Le prompt engineering a été mené sur plusieurs LLM : Gemini, GPT et Mistral."
+      ],
+      "highlights": [
+        "Corpus : Excel vers JSON avec VBA",
+        "Indexation depuis SharePoint, text-embedding-3-large",
+        "Prompt engineering multi-LLM : Gemini, GPT, Mistral"
+      ],
+      "stack": [
+        "VBA",
+        "JSON",
+        "SharePoint",
+        "OpenAI Embeddings",
+        "Gemini",
+        "GPT",
+        "Mistral"
+      ],
+      "tags": [
+        "IA & LLM",
+        "Data Engineering"
+      ],
+      "images": [
+        {
+          "src": "/images/projets/chatbots-supply-chain.svg",
+          "alt": "Schéma du pipeline : les fichiers Excel sont convertis en JSON avec VBA, indexés depuis SharePoint avec text-embedding-3-large ; une question est recherchée dans l'index puis transmise à Gemini, GPT ou Mistral.",
+          "caption": "Pipeline simplifié : préparation du corpus, puis interrogation"
+        }
+      ],
+      "links": [],
+      "featured": true,
+      "position": 3,
+      "experience_id": 2,
+      "id": 4,
+      "experience_slug": "renault"
+    },
+    {
+      "slug": "migration-nosql",
+      "title": "Migration SQL vers NoSQL",
+      "subtitle": "De SQLite vers MongoDB et Neo4j",
+      "period": "nov. – déc. 2025",
+      "context": "BUT Science des Données · Bases de données",
+      "summary": "Migration d'une base relationnelle vers un modèle documents (MongoDB) et un modèle graphe (Neo4j).",
+      "description": [
+        "Migration d'une base relationnelle SQLite vers deux modèles NoSQL : MongoDB pour les documents et Neo4j pour le graphe.",
+        "Le modèle graphe rend les relations entre entités directement interrogeables, là où une base relationnelle passe par des jointures."
+      ],
+      "highlights": [
+        "Passage d'un schéma relationnel à un modèle documents",
+        "Modélisation en graphe sous Neo4j"
+      ],
+      "stack": [
+        "SQLite",
+        "MongoDB",
+        "Neo4j"
+      ],
+      "tags": [
+        "Data Engineering"
+      ],
+      "images": [
+        {
+          "src": "/images/projets/neo4j.webp",
+          "alt": "Graphe Neo4j de nœuds et de relations",
+          "caption": "Visualisation du graphe dans Neo4j"
+        }
+      ],
+      "links": [],
+      "featured": false,
+      "position": 4,
+      "experience_id": null,
+      "id": 5,
+      "experience_slug": null
+    },
+    {
+      "slug": "portfolio",
+      "title": "Ce portfolio : de PHP/MySQL à React/FastAPI",
+      "subtitle": "Deux versions, une même base de contenu",
+      "period": "2026",
+      "context": "SAÉ S6 du BUT, puis refonte personnelle",
+      "summary": "La v1 (PHP/MySQL, soutenance du 10/02/2026) a été refondue en une architecture découplée : API FastAPI testée et front React/TypeScript.",
+      "description": [
+        "Version 1 (soutenance du 10/02/2026) : site PHP/MySQL avec modélisation MCD/MLD, back-office CRUD, filtres et pages projets, réalisé sur quatre mois avec des outils d'IA générative (Claude Code, Gemini).",
+        "Version 2, celle que vous consultez : une API REST FastAPI (SQLAlchemy, JWT, tests pytest) et un front React/TypeScript, conteneurisés avec Docker et vérifiés par une intégration continue GitHub Actions. Si l'API est indisponible, le front retombe sur un export statique du même contenu."
+      ],
+      "highlights": [
+        "API REST typée : FastAPI et Pydantic v2",
+        "Auth JWT, rate limiting, champ anti-spam sur le formulaire",
+        "Tests automatisés pytest et CI GitHub Actions",
+        "Front responsive, accessible, thème clair et sombre"
+      ],
+      "stack": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "Tailwind CSS",
+        "FastAPI",
+        "SQLAlchemy",
+        "SQLite",
+        "Docker",
+        "GitHub Actions",
+        "pytest"
+      ],
+      "tags": [
+        "Développement web"
+      ],
+      "images": [],
+      "links": [],
+      "featured": false,
+      "position": 5,
+      "experience_id": null,
+      "id": 6,
+      "experience_slug": null
+    }
+  ],
+  "skill_groups": [
+    {
+      "name": "Programmation",
+      "items": [
+        "Python",
+        "R",
+        "SQL",
+        "VBA",
+        "SAS",
+        "PHP",
+        "JavaScript",
+        "HTML/CSS",
+        "Linux"
+      ],
+      "position": 0,
+      "id": 1
+    },
+    {
+      "name": "IA & LLM",
+      "items": [
+        "RAG",
+        "Prompt engineering",
+        "Gemini",
+        "GPT",
+        "Mistral",
+        "CamemBERT",
+        "FAISS",
+        "SHAP",
+        "Gradio"
+      ],
+      "position": 1,
+      "id": 2
+    },
+    {
+      "name": "Bases de données",
+      "items": [
+        "Oracle",
+        "SQL Server",
+        "MongoDB",
+        "Neo4j",
+        "Cassandra",
+        "BigQuery"
+      ],
+      "position": 2,
+      "id": 3
+    },
+    {
+      "name": "ETL",
+      "items": [
+        "SSIS",
+        "ODI",
+        "Python"
+      ],
+      "position": 3,
+      "id": 4
+    },
+    {
+      "name": "Business Intelligence",
+      "items": [
+        "Power BI",
+        "Qlik Sense",
+        "Business Objects",
+        "D3.js"
+      ],
+      "position": 4,
+      "id": 5
+    },
+    {
+      "name": "Développement logiciel",
+      "items": [
+        "FastAPI",
+        "React",
+        "TypeScript",
+        "Docker",
+        "Git",
+        "GitHub Actions"
+      ],
+      "position": 5,
+      "id": 6
+    }
+  ],
+  "education": [
+    {
+      "school": "CY Tech",
+      "degree": "Ingénieur en apprentissage · Mathématiques appliquées et informatique",
+      "description": "Grande école d'ingénieur axée sur les mathématiques appliquées, la data et l'IA.",
+      "start_year": 2026,
+      "end_year": 2029,
+      "position": 0,
+      "id": 1
+    },
+    {
+      "school": "Université de Lille",
+      "degree": "BUT Science des Données · Visualisation et conception d'outils décisionnels",
+      "description": "Statistiques, Big Data, intelligence artificielle, Business Intelligence et data engineering.",
+      "start_year": 2023,
+      "end_year": 2026,
+      "position": 1,
+      "id": 2
+    },
+    {
+      "school": "Lycée En-nour 1",
+      "degree": "Baccalauréat Physique-Chimie · Mention Très Bien",
+      "description": "Mathématiques, physique-chimie, philosophie. Tutorat en maths, théâtre et organisation de voyage.",
+      "start_year": 2020,
+      "end_year": 2023,
+      "position": 2,
+      "id": 3
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Hackathon DataViz · 2e place",
+      "issuer": "Enedis, Météo-France et IUT de Lille",
+      "date_label": "mai 2024",
+      "kind": "distinction",
+      "position": 0,
+      "id": 1
+    },
+    {
+      "name": "Learning AI Through Visualization",
+      "issuer": "Columbia University",
+      "date_label": "octobre 2025",
+      "kind": "certification",
+      "position": 1,
+      "id": 2
+    },
+    {
+      "name": "Databricks Fundamentals",
+      "issuer": "Databricks Academy",
+      "date_label": "juin 2025",
+      "kind": "certification",
+      "position": 2,
+      "id": 3
+    },
+    {
+      "name": "Generative AI Fundamentals",
+      "issuer": "Databricks Academy",
+      "date_label": "avril 2025",
+      "kind": "certification",
+      "position": 3,
+      "id": 4
+    },
+    {
+      "name": "MOOC L'Atelier RGPD",
+      "issuer": "CNIL",
+      "date_label": "janvier 2025",
+      "kind": "certification",
+      "position": 4,
+      "id": 5
+    }
+  ],
+  "interests": [
+    {
+      "title": "Enquêtes",
+      "description": "Réalisation d'une enquête.",
+      "icon": "clipboard-list",
+      "position": 0,
+      "id": 1
+    },
+    {
+      "title": "Organisation de séminaires",
+      "description": "Organisation de séminaires.",
+      "icon": "calendar-days",
+      "position": 1,
+      "id": 2
+    },
+    {
+      "title": "Tutorat en maths",
+      "description": "Tuteur en mathématiques.",
+      "icon": "graduation-cap",
+      "position": 2,
+      "id": 3
+    },
+    {
+      "title": "Théâtre",
+      "description": "Pratique du théâtre.",
+      "icon": "drama",
+      "position": 3,
+      "id": 4
+    },
+    {
+      "title": "Jeux vidéo",
+      "description": "Ancien joueur d'équipe nationale.",
+      "icon": "gamepad-2",
+      "position": 4,
+      "id": 5
+    }
+  ]
+}

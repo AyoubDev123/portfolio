@@ -1,0 +1,26 @@
+# Lancer : cp Back-end/.env.example .env && (renseigner SECRET_KEY, ADMIN_*) && docker compose up --build
+# Site : http://localhost:8080 · Admin : http://localhost:8080/admin
+services:
+  api:
+    build: ./Back-end
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: sqlite:////data/portfolio.db
+      CORS_ORIGINS: http://localhost:8080
+    volumes:
+      - portfolio-data:/data
+    restart: unless-stopped
+
+  web:
+    build: ./Front-end
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  portfolio-data:
