@@ -2,6 +2,7 @@ import { useGSAP } from "@gsap/react";
 import { ArrowRight, Download, Mail, MapPin, Trophy } from "lucide-react";
 import { useRef } from "react";
 import { gsap } from "../../lib/gsap";
+import { useLang } from "../../lib/lang";
 import { usePortfolio } from "../../lib/portfolio";
 import type { Metric } from "../../lib/types";
 import { GithubIcon, LinkedinIcon } from "../icons";
@@ -56,6 +57,7 @@ function MetricItem({ m }: { m: Metric }) {
 export function Hero() {
   const { data } = usePortfolio();
   const { profile, certifications } = data;
+  const { t } = useLang();
   const award = certifications.find((c) => c.kind === "distinction");
 
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -80,13 +82,7 @@ export function Hero() {
   useGSAP(
     () => {
       if (!photoRef.current) return;
-      gsap.from(photoRef.current, {
-        y: 24,
-        opacity: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 0.3,
-      });
+      gsap.from(photoRef.current, { y: 24, opacity: 0, duration: 1, ease: "power2.out", delay: 0.3 });
     },
     { scope: photoRef },
   );
@@ -122,16 +118,16 @@ export function Hero() {
           <p className="rise rise-3 mt-5 max-w-xl text-lg leading-relaxed text-ink/90">{profile.tagline}</p>
 
           <div className="rise rise-4 mt-8 flex flex-wrap gap-3">
-            <a href="#projets" className="btn btn-primary">
-              Voir mes projets <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <a href="#projects" className="btn btn-primary">
+              {t.viewProjects} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
             {profile.cv_url && (
               <a href={profile.cv_url} download className="btn btn-ghost">
-                <Download className="h-4 w-4" aria-hidden="true" /> Télécharger le CV
+                <Download className="h-4 w-4" aria-hidden="true" /> {t.downloadCVFull}
               </a>
             )}
             <a href="#contact" className="btn btn-ghost">
-              <Mail className="h-4 w-4" aria-hidden="true" /> Me contacter
+              <Mail className="h-4 w-4" aria-hidden="true" /> {t.contactMe}
             </a>
           </div>
 
@@ -143,24 +139,14 @@ export function Hero() {
             )}
             {profile.linkedin && (
               <li>
-                <a
-                  href={profile.linkedin}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="flex items-center gap-2 hover:text-ink"
-                >
+                <a href={profile.linkedin} target="_blank" rel="noreferrer noopener" className="flex items-center gap-2 hover:text-ink">
                   <LinkedinIcon className="h-4 w-4" /> LinkedIn
                 </a>
               </li>
             )}
             {profile.github && (
               <li>
-                <a
-                  href={profile.github}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="flex items-center gap-2 hover:text-ink"
-                >
+                <a href={profile.github} target="_blank" rel="noreferrer noopener" className="flex items-center gap-2 hover:text-ink">
                   <GithubIcon className="h-4 w-4" /> GitHub
                 </a>
               </li>
@@ -173,7 +159,7 @@ export function Hero() {
           <div className="absolute -bottom-4 -left-4 h-full w-full rounded-[1.75rem] bg-brand-soft" aria-hidden="true" />
           <img
             src={profile.photo}
-            alt={`Portrait de ${profile.first_name} ${profile.last_name}`}
+            alt={`${profile.first_name} ${profile.last_name}`}
             width={900}
             height={1094}
             fetchPriority="high"

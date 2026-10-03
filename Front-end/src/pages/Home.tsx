@@ -6,13 +6,14 @@ import { Experience } from "../components/sections/Experience";
 import { Hero } from "../components/sections/Hero";
 import { Projects } from "../components/sections/Projects";
 import { Skills } from "../components/sections/Skills";
+import { useLang } from "../lib/lang";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 export default function Home() {
   const { hash } = useLocation();
-  useDocumentTitle("Ayoub El Abbassi · Data Scientist / Engineer");
+  const { t } = useLang();
+  useDocumentTitle(t.pageTitle);
 
-  // Arrivée depuis une autre page avec un ancrage (ex. /#projets) : on fait défiler jusqu'à la section.
   useEffect(() => {
     if (!hash) {
       window.scrollTo({ top: 0, behavior: "instant" });

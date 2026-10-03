@@ -1,21 +1,21 @@
 import { useGSAP } from "@gsap/react";
 import { useMemo, useRef, useState } from "react";
 import { gsap } from "../../lib/gsap";
+import { useLang } from "../../lib/lang";
 import { uniqueSorted } from "../../lib/format";
 import { usePortfolio } from "../../lib/portfolio";
 import { ProjectCard } from "../ProjectCard";
 import { Section } from "../Section";
 
-const ALL = "Tous";
-
 export function Projects() {
   const { data } = usePortfolio();
-  const [tag, setTag] = useState(ALL);
+  const { t } = useLang();
+  const [tag, setTag] = useState(t.filterAll);
 
-  const tags = useMemo(() => [ALL, ...uniqueSorted(data.projects.flatMap((p) => p.tags))], [data.projects]);
+  const tags = useMemo(() => [t.filterAll, ...uniqueSorted(data.projects.flatMap((p) => p.tags))], [data.projects, t.filterAll]);
   const visible = useMemo(
-    () => (tag === ALL ? data.projects : data.projects.filter((p) => p.tags.includes(tag))),
-    [data.projects, tag],
+    () => (tag === t.filterAll ? data.projects : data.projects.filter((p) => p.tags.includes(tag))),
+    [data.projects, tag, t.filterAll],
   );
 
   const gridRef = useRef<HTMLUListElement>(null);
@@ -35,32 +35,32 @@ export function Projects() {
 
   return (
     <Section
-      id="projets"
-      index="02"
-      eyebrow="Projets"
-      title="Ce que j'ai construit"
-      intro="Projets académiques et professionnels, du data engineering à la restitution, en passant par les LLM."
+      id="projects"
+      index={t.projectsIndex}
+      eyebrow={t.projectsEyebrow}
+      title={t.projectsTitle}
+      intro={t.projectsIntro}
     >
-      <div role="group" aria-label="Filtrer les projets par thème" className="flex flex-wrap gap-2">
-        {tags.map((t) => (
+      <div role="group" aria-label="Filter projects by topic" className="flex flex-wrap gap-2">
+        {tags.map((tg) => (
           <button
-            key={t}
+            key={tg}
             type="button"
-            onClick={() => setTag(t)}
-            aria-pressed={tag === t}
+            onClick={() => setTag(tg)}
+            aria-pressed={tag === tg}
             className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-              tag === t
+              tag === tg
                 ? "border-brand bg-brand text-on-brand"
                 : "border-line bg-surface text-muted hover:border-brand hover:text-ink"
             }`}
           >
-            {t}
+            {tg}
           </button>
         ))}
       </div>
 
       <p className="sr-only" role="status" aria-live="polite">
-        {visible.length} projet{visible.length > 1 ? "s" : ""} affiché{visible.length > 1 ? "s" : ""}
+        {visible.length} project{visible.length !== 1 ? "s" : ""} shown
       </p>
 
       <ul ref={gridRef} className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

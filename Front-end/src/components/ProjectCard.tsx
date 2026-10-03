@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLang } from "../lib/lang";
 import type { Project } from "../lib/types";
 import { Chip } from "./Section";
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function ProjectCard({ project, featured }: Props) {
+  const { t } = useLang();
   const cover = project.images[0];
   return (
     <article className="card group relative flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-brand/40 hover:shadow-card-strong">
@@ -31,7 +33,7 @@ export function ProjectCard({ project, featured }: Props) {
         )}
         {featured && (
           <span className="absolute left-3 top-3 rounded-full bg-brand px-2.5 py-1 font-mono text-[0.65rem] font-bold uppercase tracking-wider text-on-brand">
-            À la une
+            {t.featuredBadge}
           </span>
         )}
       </div>
@@ -42,13 +44,13 @@ export function ProjectCard({ project, featured }: Props) {
           {project.context ? ` · ${project.context}` : ""}
         </p>
         <h3 className="mt-2 text-lg font-semibold leading-snug tracking-tight">
-          <Link to={`/projets/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
+          <Link to={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
             {project.title}
           </Link>
         </h3>
         <p className="mt-2 flex-1 text-[0.95rem] text-muted">{project.summary}</p>
 
-        <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Technologies">
+        <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={t.technologies}>
           {project.stack.slice(0, 5).map((s) => (
             <li key={s}>
               <Chip>{s}</Chip>
@@ -61,7 +63,7 @@ export function ProjectCard({ project, featured }: Props) {
           )}
         </ul>
         <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand" aria-hidden="true">
-          Voir le détail <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          {t.viewDetail} <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
       </div>
     </article>

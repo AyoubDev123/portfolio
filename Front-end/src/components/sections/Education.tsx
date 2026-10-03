@@ -2,12 +2,14 @@ import { useGSAP } from "@gsap/react";
 import { Award, Trophy } from "lucide-react";
 import { useRef } from "react";
 import { gsap } from "../../lib/gsap";
+import { useLang } from "../../lib/lang";
 import { usePortfolio } from "../../lib/portfolio";
 import { InterestIcon } from "../icons";
 import { Section } from "../Section";
 
 export function Education() {
   const { data } = usePortfolio();
+  const { t } = useLang();
   const awards = data.certifications.filter((c) => c.kind === "distinction");
   const certs = data.certifications.filter((c) => c.kind === "certification");
 
@@ -57,11 +59,11 @@ export function Education() {
   return (
     <>
       <Section
-        id="formation"
-        index="04"
-        eyebrow="Formation"
-        title="Formation et certifications"
-        intro="Du bac scientifique au cycle ingénieur, avec des certifications ciblées en IA générative et en data."
+        id="education"
+        index={t.educationIndex}
+        eyebrow={t.educationEyebrow}
+        title={t.educationTitle}
+        intro={t.educationIntro}
       >
         <div ref={eduRef} className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <ol className="space-y-4">
@@ -80,7 +82,7 @@ export function Education() {
           <div className="space-y-6">
             {awards.length > 0 && (
               <div>
-                <h3 className="eyebrow">Reconnaissance</h3>
+                <h3 className="eyebrow">{t.recognitionLabel}</h3>
                 <ul className="mt-3 space-y-3">
                   {awards.map((c) => (
                     <li key={c.id} className="card flex items-start gap-4 border-brand/40 p-5">
@@ -98,7 +100,7 @@ export function Education() {
             )}
 
             <div>
-              <h3 className="eyebrow">Certifications</h3>
+              <h3 className="eyebrow">{t.certificationsLabel}</h3>
               <ul className="mt-3 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
                 {certs.map((c) => (
                   <li key={c.id} className="flex items-start gap-4 px-5 py-4">
@@ -119,11 +121,11 @@ export function Education() {
 
       {data.interests.length > 0 && (
         <Section
-          id="interets"
-          index="05"
-          eyebrow="Au-delà du code"
-          title="Centres d'intérêt"
-          intro="Enquêtes, événements, tutorat, théâtre et jeux vidéo : ce que je fais en dehors des cours."
+          id="interests"
+          index={t.interestsIndex}
+          eyebrow={t.interestsEyebrow}
+          title={t.interestsTitle}
+          intro={t.interestsIntro}
         >
           <ul ref={interestRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {data.interests.map((i) => (

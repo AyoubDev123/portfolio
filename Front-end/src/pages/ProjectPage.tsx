@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Chip } from "../components/Section";
+import { useLang } from "../lib/lang";
 import { usePortfolio } from "../lib/portfolio";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 import NotFound from "./NotFound";
@@ -9,10 +10,11 @@ import NotFound from "./NotFound";
 export default function ProjectPage() {
   const { slug } = useParams();
   const { data } = usePortfolio();
+  const { t } = useLang();
   const project = data.projects.find((p) => p.slug === slug);
   const [zoom, setZoom] = useState<number | null>(null);
 
-  useDocumentTitle(project ? `${project.title} · Ayoub El Abbassi` : "Projet introuvable");
+  useDocumentTitle(project ? `${project.title} · Ayoub El Abbassi` : t.projectNotFound);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -35,8 +37,8 @@ export default function ProjectPage() {
 
   return (
     <article className="container-page pt-10 sm:pt-14">
-      <Link to="/#projets" className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
-        <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Tous les projets
+      <Link to="/#projects" className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" /> {t.allProjects}
       </Link>
 
       <header className="mt-6 max-w-3xl">
@@ -46,10 +48,10 @@ export default function ProjectPage() {
         </p>
         <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">{project.title}</h1>
         {project.subtitle && <p className="mt-4 text-xl text-muted">{project.subtitle}</p>}
-        <ul className="mt-5 flex flex-wrap gap-2" aria-label="Thèmes">
-          {project.tags.map((t) => (
-            <li key={t}>
-              <span className="chip !bg-brand-soft !text-brand">{t}</span>
+        <ul className="mt-5 flex flex-wrap gap-2" aria-label={t.topicsLabel}>
+          {project.tags.map((tag) => (
+            <li key={tag}>
+              <span className="chip !bg-brand-soft !text-brand">{tag}</span>
             </li>
           ))}
         </ul>
@@ -66,7 +68,7 @@ export default function ProjectPage() {
           {project.images.length > 0 && (
             <section aria-labelledby="gallery-title" className="mt-12">
               <h2 id="gallery-title" className="eyebrow">
-                Aperçus
+                {t.galleryLabel}
               </h2>
               <ul className="mt-4 grid gap-4 sm:grid-cols-2">
                 {project.images.map((img, i) => (
@@ -76,7 +78,7 @@ export default function ProjectPage() {
                         type="button"
                         onClick={() => setZoom(i)}
                         className="block w-full bg-surface-2"
-                        aria-label={`Agrandir : ${img.caption || img.alt}`}
+                        aria-label={`Zoom: ${img.caption || img.alt}`}
                       >
                         <img src={img.src} alt={img.alt} loading="lazy" className="w-full object-contain" />
                       </button>
@@ -93,10 +95,10 @@ export default function ProjectPage() {
           )}
         </div>
 
-        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start" aria-label="Informations clés">
+        <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start" aria-label={t.keyPointsLabel}>
           {project.highlights.length > 0 && (
             <section className="card p-5">
-              <h2 className="eyebrow">Points clés</h2>
+              <h2 className="eyebrow">{t.keyPointsLabel}</h2>
               <ul className="mt-3 space-y-2.5 text-[0.95rem]">
                 {project.highlights.map((h) => (
                   <li key={h} className="flex gap-3">
@@ -108,7 +110,7 @@ export default function ProjectPage() {
             </section>
           )}
           <section className="card p-5">
-            <h2 className="eyebrow">Technologies</h2>
+            <h2 className="eyebrow">{t.techSideLabel}</h2>
             <ul className="mt-3 flex flex-wrap gap-2">
               {project.stack.map((s) => (
                 <li key={s}>
@@ -119,7 +121,7 @@ export default function ProjectPage() {
           </section>
           {experience && (
             <section className="card p-5">
-              <h2 className="eyebrow">Cadre</h2>
+              <h2 className="eyebrow">{t.contextSideLabel}</h2>
               <p className="mt-3 font-semibold">{experience.company}</p>
               <p className="text-sm text-muted">
                 {experience.role} · {experience.contract}
@@ -146,10 +148,10 @@ export default function ProjectPage() {
       </div>
 
       {next && next.slug !== project.slug && (
-        <nav aria-label="Projet suivant" className="mt-16 border-t border-line pt-8">
-          <Link to={`/projets/${next.slug}`} className="group flex items-center justify-between gap-6">
+        <nav aria-label={t.nextProjectLabel} className="mt-16 border-t border-line pt-8">
+          <Link to={`/projects/${next.slug}`} className="group flex items-center justify-between gap-6">
             <span>
-              <span className="eyebrow">Projet suivant</span>
+              <span className="eyebrow">{t.nextProjectLabel}</span>
               <span className="mt-1 block text-xl font-semibold tracking-tight group-hover:text-brand">
                 {next.title}
               </span>
@@ -173,7 +175,7 @@ export default function ProjectPage() {
             onClick={() => setZoom(null)}
             autoFocus
           >
-            Fermer
+            {t.closeBtn}
           </button>
           <img
             src={active.src}
