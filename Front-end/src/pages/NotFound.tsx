@@ -4,7 +4,7 @@ import { useDocumentTitle } from "../lib/useDocumentTitle";
 
 export default function NotFound() {
   const { t } = useLang();
-  useDocumentTitle(`${t.notFoundTitle} · Ayoub El Abbassi`);
+  useDocumentTitle(`${t.notFoundTitle} · Ayoub EL ABBASSI`);
   return (
     <div className="container-page grid place-items-center pt-28 text-center">
       <p className="eyebrow">{t.notFoundEyebrow}</p>

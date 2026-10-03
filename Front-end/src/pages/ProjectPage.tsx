@@ -14,7 +14,7 @@ export default function ProjectPage() {
   const project = data.projects.find((p) => p.slug === slug);
   const [zoom, setZoom] = useState<number | null>(null);
 
-  useDocumentTitle(project ? `${project.title} · Ayoub El Abbassi` : t.projectNotFound);
+  useDocumentTitle(project ? `${project.title} · Ayoub EL ABBASSI` : t.projectNotFound);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });

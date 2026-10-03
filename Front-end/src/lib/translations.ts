@@ -3,7 +3,7 @@ export type Lang = "en" | "fr";
 const en = {
   // meta / skip
   skipToContent: "Skip to content",
-  pageTitle: "Ayoub El Abbassi · Data Scientist / Engineer",
+  pageTitle: "Ayoub EL ABBASSI · Data Scientist / Engineer",
   // header
   downloadCV: "CV",
   lightTheme: "Switch to light theme",
@@ -95,7 +95,7 @@ const en = {
 
 const fr: typeof en = {
   skipToContent: "Aller au contenu",
-  pageTitle: "Ayoub El Abbassi · Data Scientist / Engineer",
+  pageTitle: "Ayoub EL ABBASSI · Data Scientist / Engineer",
   downloadCV: "CV",
   lightTheme: "Passer au thème clair",
   darkTheme: "Passer au thème sombre",

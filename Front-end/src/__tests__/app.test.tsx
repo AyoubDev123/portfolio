@@ -29,7 +29,7 @@ afterEach(() => vi.unstubAllGlobals());
 describe("site public (repli statique)", () => {
   it("affiche le profil et les expériences sans API", async () => {
     renderAt("/");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Ayoub\s*El Abbassi/);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Ayoub\s*EL ABBASSI/);
     expect(screen.getByText(/Safran Aircraft Engines/, { selector: "h3" })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText(/export statique/)).toBeInTheDocument());
   });

@@ -27,7 +27,7 @@ def test_portfolio_shape(client):
         "certifications",
         "interests",
     }
-    assert data["profile"]["last_name"] == "El Abbassi"
+    assert data["profile"]["last_name"] == "EL ABBASSI"
     assert [e["slug"] for e in data["experiences"]] == ["safran", "renault", "inventiv-it"]
 
 
