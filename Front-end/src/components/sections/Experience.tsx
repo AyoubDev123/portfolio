@@ -1,11 +1,10 @@
-import { useGSAP } from "@gsap/react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
 import { formatPeriod } from "../../lib/format";
 import { usePortfolio } from "../../lib/portfolio";
+import { useReveal } from "../../lib/useReveal";
 import { LogoBadge } from "../LogoBadge";
 import { Chip, Section } from "../Section";
 
@@ -15,28 +14,7 @@ export function Experience() {
   const projectBySlug = new Map(data.projects.map((p) => [p.slug, p]));
 
   const trackRef = useRef<HTMLOListElement>(null);
-
-  useGSAP(
-    () => {
-      const cards = trackRef.current?.querySelectorAll<HTMLElement>("li");
-      if (!cards?.length) return;
-      gsap.from(cards, {
-        x: 48,
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.out",
-        stagger: 0.12,
-        clearProps: "transform,opacity",
-        scrollTrigger: {
-          trigger: trackRef.current,
-          start: "top 82%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-      });
-    },
-    { scope: trackRef },
-  );
+  const wrapperRef = useReveal<HTMLDivElement>();
 
   const scroll = (dir: "left" | "right") => {
     const el = trackRef.current;
@@ -54,9 +32,13 @@ export function Experience() {
       title={t.careerTitle}
       intro={t.careerIntro}
     >
-      <div className="relative">
+      <div ref={wrapperRef} className="relative">
         {/* Navigation arrows */}
-        <div className="mb-4 flex justify-end gap-2">
+        <div
+          data-reveal
+          style={{ "--i": 0 } as React.CSSProperties}
+          className="mb-4 flex justify-end gap-2"
+        >
           <button
             onClick={() => scroll("left")}
             aria-label="Précédent"
@@ -79,9 +61,11 @@ export function Experience() {
           className="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth"
           style={{ scrollbarWidth: "none" }}
         >
-          {data.experiences.map((exp) => (
+          {data.experiences.map((exp, i) => (
             <li
               key={exp.id}
+              data-reveal
+              style={{ "--i": i + 1 } as React.CSSProperties}
               className="snap-start shrink-0 w-[min(88vw,380px)]"
             >
               <article className="card flex flex-col p-5 sm:p-6" style={{ height: 420 }}>

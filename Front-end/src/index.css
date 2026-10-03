@@ -205,35 +205,42 @@
   }
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+/* ── Reveal on scroll ───────────────────────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.48s ease,
+    transform 0.48s ease;
+  transition-delay: calc(var(--i, 0) * 80ms);
+  will-change: opacity, transform;
 }
+[data-reveal][data-visible="1"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Name clip-reveal (Hero) */
+@keyframes name-up {
+  from { transform: translateY(110%); }
+  to   { transform: none; }
+}
+.name-word {
+  display: block;
+  animation: name-up 0.82s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--name-delay, 0s);
+  will-change: transform;
+}
+
 @keyframes ping-soft {
-  75%,
-  100% {
-    transform: scale(2.2);
-    opacity: 0;
-  }
-}
-.rise {
-  animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-.rise-2 {
-  animation-delay: 0.08s;
-}
-.rise-3 {
-  animation-delay: 0.16s;
-}
-.rise-4 {
-  animation-delay: 0.24s;
+  75%, 100% { transform: scale(2.2); opacity: 0; }
 }
 .ping-soft {
   animation: ping-soft 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .name-word     { animation: none; }
 }

@@ -1,9 +1,8 @@
-import { useGSAP } from "@gsap/react";
-import { useMemo, useRef, useState } from "react";
-import { gsap } from "../../lib/gsap";
+import { useMemo, useState } from "react";
 import { useLang } from "../../lib/lang";
 import { uniqueSorted } from "../../lib/format";
 import { usePortfolio } from "../../lib/portfolio";
+import { useReveal } from "../../lib/useReveal";
 import { ProjectCard } from "../ProjectCard";
 import { Section } from "../Section";
 
@@ -18,20 +17,7 @@ export function Projects() {
     [data.projects, tag, t.filterAll],
   );
 
-  const gridRef = useRef<HTMLUListElement>(null);
-
-  useGSAP(
-    () => {
-      const items = Array.from(gridRef.current?.children ?? []);
-      if (!items.length) return;
-      gsap.fromTo(
-        items,
-        { y: 16, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.38, stagger: 0.055, ease: "power2.out", clearProps: "transform,opacity" },
-      );
-    },
-    { scope: gridRef, dependencies: [visible] },
-  );
+  const gridRef = useReveal<HTMLUListElement>([visible]);
 
   return (
     <Section
@@ -64,8 +50,13 @@ export function Projects() {
       </p>
 
       <ul ref={gridRef} className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((p) => (
-          <li key={p.slug} className={p.featured ? "sm:col-span-2 lg:col-span-1" : ""}>
+        {visible.map((p, i) => (
+          <li
+            key={p.slug}
+            data-reveal
+            style={{ "--i": i } as React.CSSProperties}
+            className={p.featured ? "sm:col-span-2 lg:col-span-1" : ""}
+          >
             <ProjectCard project={p} featured={p.featured} />
           </li>
         ))}

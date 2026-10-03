@@ -1,62 +1,26 @@
-import { useGSAP } from "@gsap/react";
 import { ArrowRight, Download, Mail, MapPin } from "lucide-react";
-import { useRef } from "react";
-import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
 import { usePortfolio } from "../../lib/portfolio";
+import { useReveal } from "../../lib/useReveal";
 import type { Metric } from "../../lib/types";
 import { GithubIcon, LinkedinIcon } from "../icons";
 
-function CountUp({ value }: { value: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const match = value.match(/^([\d.]+)(.*)$/);
-
-  useGSAP(
-    () => {
-      if (!ref.current || !match) return;
-      const num = parseFloat(match[1]);
-      const suffix = match[2] ?? "";
-      const isInt = Number.isInteger(num);
-      const obj = { val: 0 };
-      gsap.to(obj, {
-        val: num,
-        duration: 1.6,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 95%",
-          toggleActions: "play none none none",
-          once: true,
-        },
-        onUpdate() {
-          if (ref.current) {
-            ref.current.textContent = (isInt ? Math.round(obj.val) : obj.val.toFixed(1)) + suffix;
-          }
-        },
-      });
-    },
-    { scope: ref },
-  );
-
-  return <span ref={ref}>{value}</span>;
-}
-
-function MetricItem({ m }: { m: Metric }) {
+function MetricItem({ m, i }: { m: Metric; i: number }) {
   const isNumeric = /\d/.test(m.value);
   return (
-    <div className="bg-surface px-5 py-5 flex flex-col justify-center">
+    <div
+      data-reveal
+      style={{ "--i": i } as React.CSSProperties}
+      className="bg-surface px-5 py-5 flex flex-col justify-center"
+    >
       <dt className="sr-only">{m.label || m.value}</dt>
       <dd>
         {isNumeric ? (
-          <span className="block font-mono text-3xl font-semibold tracking-tight text-brand sm:text-4xl">
-            <CountUp value={m.value} />
-          </span>
+          <span className="block font-mono text-3xl font-semibold tracking-tight text-brand sm:text-4xl">{m.value}</span>
         ) : (
           <span className="block text-base font-semibold tracking-tight text-brand">{m.value}</span>
         )}
-        {m.label && (
-          <span className="mt-1.5 block text-sm leading-snug text-muted">{m.label}</span>
-        )}
+        {m.label && <span className="mt-1.5 block text-sm leading-snug text-muted">{m.label}</span>}
       </dd>
     </div>
   );
@@ -66,50 +30,18 @@ export function Hero() {
   const { data } = usePortfolio();
   const { profile } = data;
   const { t } = useLang();
-
-  const heroRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const el = heroRef.current;
-      if (!el) return;
-
-      // Name words — clip reveal
-      const words = el.querySelectorAll<HTMLSpanElement>(".name-word");
-      if (words.length) {
-        gsap.from(words, {
-          y: "110%",
-          duration: 0.85,
-          ease: "power3.out",
-          stagger: 0.11,
-          delay: 0.1,
-          clearProps: "transform",
-        });
-      }
-
-      // Everything else — staggered fade+slide up
-      const staggerTargets = el.querySelectorAll<HTMLElement>(".hero-reveal");
-      if (staggerTargets.length) {
-        gsap.from(staggerTargets, {
-          y: 18,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.1,
-          delay: 0.35,
-          clearProps: "transform,opacity",
-        });
-      }
-    },
-    { scope: heroRef },
-  );
+  const sectionRef = useReveal<HTMLElement>();
 
   return (
-    <section aria-labelledby="hero-title" className="container-page pt-12 sm:pt-20">
-      <div ref={heroRef} className="grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr]">
+    <section ref={sectionRef} aria-labelledby="hero-title" className="container-page pt-12 sm:pt-20">
+      <div className="grid items-center gap-12 lg:grid-cols-[1.25fr_0.75fr]">
         <div>
           {profile.status_label && (
-            <p className="hero-reveal inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-muted">
+            <p
+              data-reveal
+              style={{ "--i": 0 } as React.CSSProperties}
+              className="inline-flex items-center gap-2.5 rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm text-muted"
+            >
               <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="ping-soft absolute inline-flex h-full w-full rounded-full bg-brand opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
@@ -123,17 +55,37 @@ export function Hero() {
             className="mt-6 text-[clamp(2.6rem,7vw,4.75rem)] font-semibold leading-[1.02] tracking-tight"
           >
             <span className="block overflow-hidden">
-              <span className="name-word block">{profile.first_name}</span>
+              <span className="name-word" style={{ "--name-delay": "0.1s" } as React.CSSProperties}>
+                {profile.first_name}
+              </span>
             </span>
             <span className="block overflow-hidden">
-              <span className="name-word block text-brand">{profile.last_name}</span>
+              <span className="name-word text-brand" style={{ "--name-delay": "0.22s" } as React.CSSProperties}>
+                {profile.last_name}
+              </span>
             </span>
           </h1>
 
-          <p className="hero-reveal mt-5 font-mono text-sm text-muted sm:text-base">{profile.headline}</p>
-          <p className="hero-reveal mt-5 max-w-xl text-lg leading-relaxed text-ink/90">{profile.tagline}</p>
+          <p
+            data-reveal
+            style={{ "--i": 1 } as React.CSSProperties}
+            className="mt-5 font-mono text-sm text-muted sm:text-base"
+          >
+            {profile.headline}
+          </p>
+          <p
+            data-reveal
+            style={{ "--i": 2 } as React.CSSProperties}
+            className="mt-5 max-w-xl text-lg leading-relaxed text-ink/90"
+          >
+            {profile.tagline}
+          </p>
 
-          <div className="hero-reveal mt-8 flex flex-wrap gap-3">
+          <div
+            data-reveal
+            style={{ "--i": 3 } as React.CSSProperties}
+            className="mt-8 flex flex-wrap gap-3"
+          >
             <a href="#projects" className="btn btn-primary">
               {t.viewProjects} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </a>
@@ -147,7 +99,11 @@ export function Hero() {
             </a>
           </div>
 
-          <ul className="hero-reveal mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted">
+          <ul
+            data-reveal
+            style={{ "--i": 4 } as React.CSSProperties}
+            className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted"
+          >
             {profile.city && (
               <li className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" aria-hidden="true" /> {profile.city}
@@ -170,7 +126,11 @@ export function Hero() {
           </ul>
         </div>
 
-        <div className="hero-reveal relative mx-auto w-full max-w-sm lg:max-w-none">
+        <div
+          data-reveal
+          style={{ "--i": 2 } as React.CSSProperties}
+          className="relative mx-auto w-full max-w-sm lg:max-w-none"
+        >
           <div className="dot-grid absolute -right-6 -top-6 h-40 w-40 rounded-3xl opacity-80" aria-hidden="true" />
           <div className="absolute -bottom-4 -left-4 h-full w-full rounded-[1.75rem] bg-brand-soft" aria-hidden="true" />
           <img
@@ -186,8 +146,8 @@ export function Hero() {
 
       {profile.metrics.length > 0 && (
         <dl className="mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
-          {profile.metrics.map((m) => (
-            <MetricItem key={m.label || m.value} m={m} />
+          {profile.metrics.map((m, i) => (
+            <MetricItem key={m.label || m.value} m={m} i={i} />
           ))}
         </dl>
       )}

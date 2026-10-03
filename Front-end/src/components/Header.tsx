@@ -1,8 +1,6 @@
-import { useGSAP } from "@gsap/react";
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { gsap } from "../lib/gsap";
 import { useLang } from "../lib/lang";
 import { usePortfolio } from "../lib/portfolio";
 import { useTheme } from "../lib/theme";
@@ -21,19 +19,19 @@ export function Header() {
 
   const progressRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    if (!progressRef.current) return;
-    gsap.set(progressRef.current, { scaleX: 0, transformOrigin: "left" });
-    gsap.to(progressRef.current, {
-      scaleX: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: document.documentElement,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.2,
-      },
-    });
+  // Scroll progress bar via CSS scroll-driven animation fallback with JS
+  useEffect(() => {
+    const bar = progressRef.current;
+    if (!bar) return;
+
+    const onScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const progress = scrollHeight <= clientHeight ? 0 : scrollTop / (scrollHeight - clientHeight);
+      bar.style.transform = `scaleX(${progress})`;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {

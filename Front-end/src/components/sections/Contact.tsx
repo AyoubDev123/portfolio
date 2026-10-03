@@ -1,10 +1,9 @@
-import { useGSAP } from "@gsap/react";
 import { CheckCircle2, Download, Mail, MapPin, Send } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { ApiError, sendContact } from "../../lib/api";
-import { gsap } from "../../lib/gsap";
 import { useLang } from "../../lib/lang";
 import { usePortfolio } from "../../lib/portfolio";
+import { useReveal } from "../../lib/useReveal";
 import { GithubIcon, LinkedinIcon } from "../icons";
 import { Section } from "../Section";
 
@@ -19,48 +18,7 @@ export function Contact() {
   const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const wrapper = wrapperRef.current;
-      if (!wrapper) return;
-
-      const infoCards = wrapper.querySelectorAll<HTMLElement>(".contact-info > *");
-      const formCard = wrapper.querySelector<HTMLElement>(".contact-form");
-
-      if (infoCards.length) {
-        gsap.from(infoCards, {
-          x: -20,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.out",
-          stagger: 0.07,
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-
-      if (formCard) {
-        gsap.from(formCard, {
-          x: 20,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          delay: 0.1,
-          scrollTrigger: {
-            trigger: wrapper,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        });
-      }
-    },
-    { scope: wrapperRef },
-  );
+  const wrapperRef = useReveal<HTMLDivElement>();
 
   const set = (key: keyof typeof EMPTY) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -91,8 +49,13 @@ export function Contact() {
       intro={t.contactIntro}
     >
       <div ref={wrapperRef} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="contact-info space-y-4">
-          <a href={`mailto:${profile.email}`} className="card flex items-center gap-4 p-5 hover:border-brand">
+        <div className="space-y-4">
+          <a
+            href={`mailto:${profile.email}`}
+            data-reveal
+            style={{ "--i": 0 } as React.CSSProperties}
+            className="card flex items-center gap-4 p-5 hover:border-brand"
+          >
             <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand">
               <Mail className="h-5 w-5" aria-hidden="true" />
             </span>
@@ -102,7 +65,11 @@ export function Contact() {
             </span>
           </a>
           {profile.city && (
-            <div className="card flex items-center gap-4 p-5">
+            <div
+              data-reveal
+              style={{ "--i": 1 } as React.CSSProperties}
+              className="card flex items-center gap-4 p-5"
+            >
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand">
                 <MapPin className="h-5 w-5" aria-hidden="true" />
               </span>
@@ -113,7 +80,13 @@ export function Contact() {
             </div>
           )}
           {profile.cv_url && (
-            <a href={profile.cv_url} download className="card flex items-center gap-4 p-5 hover:border-brand">
+            <a
+              href={profile.cv_url}
+              download
+              data-reveal
+              style={{ "--i": 2 } as React.CSSProperties}
+              className="card flex items-center gap-4 p-5 hover:border-brand"
+            >
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand">
                 <Download className="h-5 w-5" aria-hidden="true" />
               </span>
@@ -128,6 +101,8 @@ export function Contact() {
               href={profile.linkedin}
               target="_blank"
               rel="noreferrer noopener"
+              data-reveal
+              style={{ "--i": 3 } as React.CSSProperties}
               className="card flex items-center gap-4 p-5 hover:border-brand"
             >
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand">
@@ -141,6 +116,8 @@ export function Contact() {
               href={profile.github}
               target="_blank"
               rel="noreferrer noopener"
+              data-reveal
+              style={{ "--i": 4 } as React.CSSProperties}
               className="card flex items-center gap-4 p-5 hover:border-brand"
             >
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft text-brand">
@@ -151,7 +128,13 @@ export function Contact() {
           )}
         </div>
 
-        <form onSubmit={onSubmit} className="contact-form card space-y-4 p-6 sm:p-7" noValidate={false}>
+        <form
+          onSubmit={onSubmit}
+          data-reveal
+          style={{ "--i": 1 } as React.CSSProperties}
+          className="card space-y-4 p-6 sm:p-7"
+          noValidate={false}
+        >
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="c-name" className="mb-1.5 block text-sm font-medium">
