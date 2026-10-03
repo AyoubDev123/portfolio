@@ -1,6 +1,8 @@
+import { useGSAP } from "@gsap/react";
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { gsap } from "../lib/gsap";
 import { usePortfolio } from "../lib/portfolio";
 import { useTheme } from "../lib/theme";
 
@@ -17,8 +19,43 @@ export function Header() {
   const { data } = usePortfolio();
   const { profile } = data;
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
   const { pathname } = useLocation();
   const base = pathname === "/" ? "" : "/";
+
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!progressRef.current) return;
+    gsap.set(progressRef.current, { scaleX: 0, transformOrigin: "left" });
+    gsap.to(progressRef.current, {
+      scaleX: 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: document.documentElement,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 0.2,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    const sections = LINKS.map((l) => document.getElementById(l.href.slice(1))).filter(Boolean) as HTMLElement[];
+    if (!sections.length) return;
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px", threshold: 0 },
+    );
+
+    sections.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-md">
@@ -33,15 +70,26 @@ export function Header() {
         </Link>
 
         <nav aria-label="Navigation principale" className="hidden items-center gap-1 md:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={`${base}${l.href}`}
-              className="rounded-lg px-3 py-2 text-sm text-muted transition-colors hover:text-ink"
-            >
-              {l.label}
-            </a>
-          ))}
+          {LINKS.map((l) => {
+            const isActive = active === l.href.slice(1);
+            return (
+              <a
+                key={l.href}
+                href={`${base}${l.href}`}
+                className={`relative rounded-lg px-3 py-2 text-sm transition-colors ${
+                  isActive ? "font-medium text-ink" : "text-muted hover:text-ink"
+                }`}
+              >
+                {l.label}
+                {isActive && (
+                  <span
+                    className="absolute -bottom-px left-3 right-3 h-0.5 rounded-full bg-brand"
+                    aria-hidden="true"
+                  />
+                )}
+              </a>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2">
@@ -71,6 +119,14 @@ export function Header() {
         </div>
       </div>
 
+      {/* Scroll progress bar */}
+      <div
+        ref={progressRef}
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 h-px w-full origin-left bg-brand"
+        style={{ transform: "scaleX(0)" }}
+      />
+
       {open && (
         <nav id="mobile-nav" aria-label="Navigation mobile" className="border-t border-line bg-bg md:hidden">
           <div className="container-page flex flex-col py-2">
@@ -79,7 +135,7 @@ export function Header() {
                 key={l.href}
                 href={`${base}${l.href}`}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-2 py-3 text-base text-ink"
+                className={`rounded-lg px-2 py-3 text-base ${active === l.href.slice(1) ? "font-semibold text-brand" : "text-ink"}`}
               >
                 {l.label}
               </a>

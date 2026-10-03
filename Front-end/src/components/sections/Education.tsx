@@ -1,4 +1,7 @@
+import { useGSAP } from "@gsap/react";
 import { Award, Trophy } from "lucide-react";
+import { useRef } from "react";
+import { gsap } from "../../lib/gsap";
 import { usePortfolio } from "../../lib/portfolio";
 import { InterestIcon } from "../icons";
 import { Section } from "../Section";
@@ -7,6 +10,49 @@ export function Education() {
   const { data } = usePortfolio();
   const awards = data.certifications.filter((c) => c.kind === "distinction");
   const certs = data.certifications.filter((c) => c.kind === "certification");
+
+  const eduRef = useRef<HTMLDivElement>(null);
+  const interestRef = useRef<HTMLUListElement>(null);
+
+  useGSAP(
+    () => {
+      const cards = eduRef.current?.querySelectorAll<HTMLElement>("li");
+      if (!cards?.length) return;
+      gsap.from(cards, {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.09,
+        scrollTrigger: {
+          trigger: eduRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    },
+    { scope: eduRef },
+  );
+
+  useGSAP(
+    () => {
+      const cards = interestRef.current?.querySelectorAll<HTMLElement>("li");
+      if (!cards?.length) return;
+      gsap.from(cards, {
+        y: 20,
+        opacity: 0,
+        duration: 0.45,
+        ease: "power2.out",
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: interestRef.current,
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+    },
+    { scope: interestRef },
+  );
 
   return (
     <>
@@ -17,7 +63,7 @@ export function Education() {
         title="Formation et certifications"
         intro="Du bac scientifique au cycle ingénieur, avec des certifications ciblées en IA générative et en data."
       >
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div ref={eduRef} className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <ol className="space-y-4">
             {data.education.map((e) => (
               <li key={e.id} className="card p-5 sm:p-6">
@@ -79,7 +125,7 @@ export function Education() {
           title="Centres d'intérêt"
           intro="Enquêtes, événements, tutorat, théâtre et jeux vidéo : ce que je fais en dehors des cours."
         >
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <ul ref={interestRef} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {data.interests.map((i) => (
               <li key={i.id} className="card p-5">
                 <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-soft text-brand">

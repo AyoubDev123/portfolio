@@ -1,8 +1,45 @@
+import { useGSAP } from "@gsap/react";
+import { useRef } from "react";
+import { gsap } from "../../lib/gsap";
 import { usePortfolio } from "../../lib/portfolio";
 import { Chip, Section } from "../Section";
 
+const GROUP_ACCENTS: Record<string, string> = {
+  "Data Engineering": "bg-brand",
+  "IA & Machine Learning": "bg-brand",
+  "BI & Visualisation": "bg-warm",
+  "Développement": "bg-muted",
+  "Développement logiciel": "bg-muted",
+};
+
+function accentFor(name: string) {
+  return GROUP_ACCENTS[name] ?? "bg-brand";
+}
+
 export function Skills() {
   const { data } = usePortfolio();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const cards = wrapperRef.current?.querySelectorAll<HTMLElement>(".skill-card");
+      if (!cards?.length) return;
+      gsap.from(cards, {
+        y: 24,
+        opacity: 0,
+        duration: 0.55,
+        ease: "power2.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: wrapperRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    },
+    { scope: wrapperRef },
+  );
+
   return (
     <Section
       id="competences"
@@ -11,13 +48,16 @@ export function Skills() {
       title="La chaîne de valeur de la donnée"
       intro="De l'ingestion à la décision : data engineering, IA, BI et développement logiciel."
     >
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div ref={wrapperRef} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {data.skill_groups.map((g) => (
-          <section key={g.id} aria-labelledby={`skill-${g.id}`} className="card p-5">
-            <h3 id={`skill-${g.id}`} className="eyebrow !text-ink">
-              {g.name}
-            </h3>
-            <ul className="mt-4 flex flex-wrap gap-2">
+          <section key={g.id} aria-labelledby={`skill-${g.id}`} className="skill-card card p-5">
+            <div className="mb-4 flex items-center gap-3">
+              <span className={`h-4 w-0.5 rounded-full ${accentFor(g.name)}`} aria-hidden="true" />
+              <h3 id={`skill-${g.id}`} className="eyebrow !text-ink">
+                {g.name}
+              </h3>
+            </div>
+            <ul className="flex flex-wrap gap-2">
               {g.items.map((item) => (
                 <li key={item}>
                   <Chip>{item}</Chip>

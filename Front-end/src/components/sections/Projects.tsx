@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { useMemo, useRef, useState } from "react";
+import { gsap } from "../../lib/gsap";
 import { uniqueSorted } from "../../lib/format";
 import { usePortfolio } from "../../lib/portfolio";
 import { ProjectCard } from "../ProjectCard";
@@ -14,6 +16,21 @@ export function Projects() {
   const visible = useMemo(
     () => (tag === ALL ? data.projects : data.projects.filter((p) => p.tags.includes(tag))),
     [data.projects, tag],
+  );
+
+  const gridRef = useRef<HTMLUListElement>(null);
+
+  useGSAP(
+    () => {
+      const items = Array.from(gridRef.current?.children ?? []);
+      if (!items.length) return;
+      gsap.fromTo(
+        items,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.38, stagger: 0.055, ease: "power2.out", clearProps: "transform,opacity" },
+      );
+    },
+    { scope: gridRef, dependencies: [visible] },
   );
 
   return (
@@ -46,10 +63,10 @@ export function Projects() {
         {visible.length} projet{visible.length > 1 ? "s" : ""} affiché{visible.length > 1 ? "s" : ""}
       </p>
 
-      <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ul ref={gridRef} className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((p) => (
-          <li key={p.slug}>
-            <ProjectCard project={p} />
+          <li key={p.slug} className={p.featured ? "sm:col-span-2 lg:col-span-1" : ""}>
+            <ProjectCard project={p} featured={p.featured} />
           </li>
         ))}
       </ul>

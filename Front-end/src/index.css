@@ -19,6 +19,7 @@
   --on-brand: #ffffff;
   --warm: #b45309;
   --shadow: 0 1px 2px rgb(13 26 25 / 0.06), 0 8px 24px -12px rgb(13 26 25 / 0.18);
+  --shadow-strong: 0 2px 4px rgb(13 26 25 / 0.08), 0 16px 40px -12px rgb(13 26 25 / 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +37,7 @@
     --on-brand: #04201c;
     --warm: #f0a95c;
     --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -14px rgb(0 0 0 / 0.7);
+    --shadow-strong: 0 2px 6px rgb(0 0 0 / 0.5), 0 20px 48px -14px rgb(0 0 0 / 0.8);
   }
 }
 
@@ -53,6 +55,7 @@
   --on-brand: #04201c;
   --warm: #f0a95c;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -14px rgb(0 0 0 / 0.7);
+  --shadow-strong: 0 2px 6px rgb(0 0 0 / 0.5), 0 20px 48px -14px rgb(0 0 0 / 0.8);
 }
 
 @theme inline {
@@ -68,6 +71,7 @@
   --color-on-brand: var(--on-brand);
   --color-warm: var(--warm);
   --shadow-card: var(--shadow);
+  --shadow-card-strong: var(--shadow-strong);
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
 }
