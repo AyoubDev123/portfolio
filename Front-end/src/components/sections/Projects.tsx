@@ -8,14 +8,22 @@ import { Section } from "../Section";
 
 export function Projects() {
   const { data } = usePortfolio();
-  const { t } = useLang();
-  const [tag, setTag] = useState(t.filterAll);
+  const { t, lang } = useLang();
+  // null = aucun filtre. On ne stocke pas le libellé « Tous » / « All » : il
+  // change avec la langue, et le filtre ne correspondrait plus à rien.
+  const [tag, setTag] = useState<string | null>(null);
 
-  const tags = useMemo(() => [t.filterAll, ...uniqueSorted(data.projects.flatMap((p) => p.tags))], [data.projects, t.filterAll]);
-  const visible = useMemo(
-    () => (tag === t.filterAll ? data.projects : data.projects.filter((p) => p.tags.includes(tag))),
-    [data.projects, tag, t.filterAll],
+  const tags = useMemo(
+    () => uniqueSorted(data.projects.flatMap((p) => p.tags), lang),
+    [data.projects, lang],
   );
+  const visible = useMemo(
+    () => (tag === null ? data.projects : data.projects.filter((p) => p.tags.includes(tag))),
+    [data.projects, tag],
+  );
+
+  // Les thèmes sont traduits : un filtre actif n'existe plus après bascule.
+  if (tag !== null && !tags.includes(tag)) setTag(null);
 
   const gridRef = useReveal<HTMLUListElement>([visible]);
 
@@ -27,10 +35,10 @@ export function Projects() {
       title={t.projectsTitle}
       intro={t.projectsIntro}
     >
-      <div role="group" aria-label="Filter projects by topic" className="flex flex-wrap gap-2">
-        {tags.map((tg) => (
+      <div role="group" aria-label={t.filterByTopic} className="flex flex-wrap gap-2">
+        {[null, ...tags].map((tg) => (
           <button
-            key={tg}
+            key={tg ?? "__all__"}
             type="button"
             onClick={() => setTag(tg)}
             aria-pressed={tag === tg}
@@ -40,13 +48,13 @@ export function Projects() {
                 : "border-line bg-surface text-muted hover:border-brand hover:text-ink"
             }`}
           >
-            {tg}
+            {tg ?? t.filterAll}
           </button>
         ))}
       </div>
 
       <p className="sr-only" role="status" aria-live="polite">
-        {visible.length} project{visible.length !== 1 ? "s" : ""} shown
+        {visible.length} {t.projectsShown}
       </p>
 
       <ul ref={gridRef} className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,4 +1,10 @@
+import type { Lang } from "./translations";
+
 // Miroir des schémas Pydantic du back-end (Back-end/app/schemas.py).
+
+/** Traductions d'une entité : les champs des interfaces ci-dessous portent
+ *  l'anglais (langue canonique), i18n.fr ne contient que les champs traduits. */
+export type I18n = Partial<Record<Lang, Record<string, unknown>>>;
 
 export interface LanguageLevel {
   name: string;
@@ -34,6 +40,7 @@ export interface Profile {
   cv_url: string;
   languages: LanguageLevel[];
   metrics: Metric[];
+  i18n: I18n;
 }
 
 export interface Experience {
@@ -51,6 +58,7 @@ export interface Experience {
   position: number;
   current: boolean;
   project_slugs: string[];
+  i18n: I18n;
 }
 
 export interface Project {
@@ -71,6 +79,7 @@ export interface Project {
   position: number;
   experience_id: number | null;
   experience_slug: string | null;
+  i18n: I18n;
 }
 
 export interface SkillGroup {
@@ -78,6 +87,7 @@ export interface SkillGroup {
   name: string;
   items: string[];
   position: number;
+  i18n: I18n;
 }
 export interface Education {
   id: number;
@@ -87,6 +97,7 @@ export interface Education {
   start_year: number;
   end_year: number;
   position: number;
+  i18n: I18n;
 }
 export interface Certification {
   id: number;
@@ -95,6 +106,7 @@ export interface Certification {
   date_label: string;
   kind: "certification" | "distinction";
   position: number;
+  i18n: I18n;
 }
 export interface Interest {
   id: number;
@@ -102,6 +114,7 @@ export interface Interest {
   description: string;
   icon: string;
   position: number;
+  i18n: I18n;
 }
 
 export interface Portfolio {

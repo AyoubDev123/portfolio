@@ -50,6 +50,7 @@ class ProfileBase(BaseModel):
     cv_url: str = ""
     languages: list[LanguageLevel] = []
     metrics: list[Metric] = []
+    i18n: dict[str, dict] = {}
 
 
 class ProfileRead(ProfileBase, ORM):
@@ -69,6 +70,7 @@ class ExperienceBase(BaseModel):
     highlights: list[str] = []
     stack: list[str] = []
     position: int = 0
+    i18n: dict[str, dict] = {}
 
     @field_validator("end_date")
     @classmethod
@@ -102,6 +104,7 @@ class ProjectBase(BaseModel):
     featured: bool = False
     position: int = 0
     experience_id: int | None = None
+    i18n: dict[str, dict] = {}
 
 
 class ProjectRead(ProjectBase, ORM):
@@ -114,6 +117,7 @@ class SkillGroupBase(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     items: list[str] = []
     position: int = 0
+    i18n: dict[str, dict] = {}
 
 
 class SkillGroupRead(SkillGroupBase, ORM):
@@ -127,6 +131,7 @@ class EducationBase(BaseModel):
     start_year: int = Field(ge=1990, le=2100)
     end_year: int = Field(ge=1990, le=2100)
     position: int = 0
+    i18n: dict[str, dict] = {}
 
 
 class EducationRead(EducationBase, ORM):
@@ -139,6 +144,7 @@ class CertificationBase(BaseModel):
     date_label: str = Field(max_length=60)
     kind: Literal["certification", "distinction"] = "certification"
     position: int = 0
+    i18n: dict[str, dict] = {}
 
 
 class CertificationRead(CertificationBase, ORM):
@@ -150,6 +156,7 @@ class InterestBase(BaseModel):
     description: str = Field(default="", max_length=300)
     icon: str = "sparkles"
     position: int = 0
+    i18n: dict[str, dict] = {}
 
 
 class InterestRead(InterestBase, ORM):

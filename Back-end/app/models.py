@@ -53,6 +53,9 @@ class Profile(Base):
     cv_url: Mapped[str] = mapped_column(String(300), default="")
     languages: Mapped[list] = mapped_column(JSON, default=list)  # [{name, level}]
     metrics: Mapped[list] = mapped_column(JSON, default=list)  # [{value, label}]
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -73,6 +76,9 @@ class Experience(Base):
     highlights: Mapped[list] = mapped_column(JSON, default=list)
     stack: Mapped[list] = mapped_column(JSON, default=list)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -99,6 +105,9 @@ class Project(Base):
     featured: Mapped[bool] = mapped_column(Boolean, default=False)
     position: Mapped[int] = mapped_column(Integer, default=0)
     experience_id: Mapped[int | None] = mapped_column(ForeignKey("experience.id", ondelete="SET NULL"), nullable=True)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -113,6 +122,9 @@ class SkillGroup(Base):
     name: Mapped[str] = mapped_column(String(120))
     items: Mapped[list] = mapped_column(JSON, default=list)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -128,6 +140,9 @@ class Education(Base):
     start_year: Mapped[int] = mapped_column(Integer)
     end_year: Mapped[int] = mapped_column(Integer)
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -142,6 +157,9 @@ class Certification(Base):
     date_label: Mapped[str] = mapped_column(String(60))
     kind: Mapped[str] = mapped_column(String(20), default="certification")  # | distinction
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -155,6 +173,9 @@ class Interest(Base):
     description: Mapped[str] = mapped_column(String(300), default="")
     icon: Mapped[str] = mapped_column(String(40), default="sparkles")
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Traductions : {"fr": {"<champ>": <valeur>}}. Les colonnes portent l'anglais
+    # (langue canonique) ; i18n ne contient que les champs réellement traduits.
+    i18n: Mapped[dict] = mapped_column(JSON, default=dict)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

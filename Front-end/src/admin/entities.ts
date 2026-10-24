@@ -33,7 +33,7 @@ export const ENTITIES: EntityDef[] = [
     path: "profile",
     singleton: true,
     title: (r) => `${s(r.first_name)} ${s(r.last_name)}`,
-    defaults: {},
+    defaults: { i18n: {} },
     fields: [
       { key: "first_name", label: "Prénom", type: "text", required: true },
       { key: "last_name", label: "Nom", type: "text", required: true },
@@ -49,6 +49,7 @@ export const ENTITIES: EntityDef[] = [
       { key: "cv_url", label: "Chemin du CV (PDF)", type: "text" },
       { key: "languages", label: "Langues (JSON : [{name, level}])", type: "json" },
       { key: "metrics", label: "Chiffres clés (JSON : [{value, label}])", type: "json" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -57,7 +58,7 @@ export const ENTITIES: EntityDef[] = [
     path: "experiences",
     title: (r) => s(r.company),
     subtitle: (r) => `${s(r.role)} · ${s(r.contract)}`,
-    defaults: { position: 0, highlights: [], stack: [] },
+    defaults: { i18n: {}, position: 0, highlights: [], stack: [] },
     fields: [
       { key: "slug", label: "Slug (a-z, 0-9, tirets)", type: "text", required: true },
       { key: "company", label: "Entreprise", type: "text", required: true },
@@ -70,6 +71,7 @@ export const ENTITIES: EntityDef[] = [
       { key: "highlights", label: "Réalisations (une par ligne)", type: "lines" },
       { key: "stack", label: "Technologies (une par ligne)", type: "lines" },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -78,7 +80,7 @@ export const ENTITIES: EntityDef[] = [
     path: "projects",
     title: (r) => s(r.title),
     subtitle: (r) => s(r.period),
-    defaults: { position: 0, featured: false, description: [], highlights: [], stack: [], tags: [], images: [], links: [] },
+    defaults: { i18n: {}, position: 0, featured: false, description: [], highlights: [], stack: [], tags: [], images: [], links: [] },
     fields: [
       { key: "slug", label: "Slug (a-z, 0-9, tirets)", type: "text", required: true },
       { key: "title", label: "Titre", type: "text", required: true },
@@ -95,6 +97,7 @@ export const ENTITIES: EntityDef[] = [
       { key: "experience_id", label: "Expérience liée", type: "select" },
       { key: "featured", label: "À la une", type: "bool" },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -102,11 +105,12 @@ export const ENTITIES: EntityDef[] = [
     label: "Compétences",
     path: "skill-groups",
     title: (r) => s(r.name),
-    defaults: { position: 0, items: [] },
+    defaults: { i18n: {}, position: 0, items: [] },
     fields: [
       { key: "name", label: "Catégorie", type: "text", required: true },
       { key: "items", label: "Compétences (une par ligne)", type: "lines" },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -115,7 +119,7 @@ export const ENTITIES: EntityDef[] = [
     path: "education",
     title: (r) => s(r.school),
     subtitle: (r) => s(r.degree),
-    defaults: { position: 0 },
+    defaults: { i18n: {}, position: 0 },
     fields: [
       { key: "school", label: "Établissement", type: "text", required: true },
       { key: "degree", label: "Diplôme", type: "text", required: true },
@@ -123,6 +127,7 @@ export const ENTITIES: EntityDef[] = [
       { key: "start_year", label: "Année de début", type: "number", required: true },
       { key: "end_year", label: "Année de fin", type: "number", required: true },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -131,7 +136,7 @@ export const ENTITIES: EntityDef[] = [
     path: "certifications",
     title: (r) => s(r.name),
     subtitle: (r) => `${s(r.issuer)} · ${s(r.date_label)}`,
-    defaults: { position: 0, kind: "certification" },
+    defaults: { i18n: {}, position: 0, kind: "certification" },
     fields: [
       { key: "name", label: "Intitulé", type: "text", required: true },
       { key: "issuer", label: "Organisme", type: "text", required: true },
@@ -146,6 +151,7 @@ export const ENTITIES: EntityDef[] = [
         ],
       },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
   {
@@ -153,7 +159,7 @@ export const ENTITIES: EntityDef[] = [
     label: "Intérêts",
     path: "interests",
     title: (r) => s(r.title),
-    defaults: { position: 0, icon: "sparkles" },
+    defaults: { i18n: {}, position: 0, icon: "sparkles" },
     fields: [
       { key: "title", label: "Titre", type: "text", required: true },
       { key: "description", label: "Description", type: "text" },
@@ -166,6 +172,7 @@ export const ENTITIES: EntityDef[] = [
         ),
       },
       { key: "position", label: "Ordre", type: "number" },
+      { key: "i18n", label: "Traductions (JSON : {\"fr\": {\"champ\": \"valeur\"}})", type: "json" },
     ],
   },
 ];

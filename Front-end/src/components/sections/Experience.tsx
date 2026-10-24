@@ -10,7 +10,7 @@ import { Chip, Section } from "../Section";
 
 export function Experience() {
   const { data } = usePortfolio();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const projectBySlug = new Map(data.projects.map((p) => [p.slug, p]));
 
   const trackRef = useRef<HTMLOListElement>(null);
@@ -87,7 +87,7 @@ export function Experience() {
                   <div className="mt-2.5 flex flex-wrap items-center gap-2 font-mono text-xs text-muted">
                     <Chip>{exp.contract}</Chip>
                     <time dateTime={exp.start_date} className="ml-auto">
-                      {formatPeriod(exp.start_date, exp.end_date, exp.current)}
+                      {formatPeriod(exp.start_date, exp.end_date, exp.current, lang)}
                     </time>
                   </div>
                   {exp.location && (

@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import staticData from "../data/portfolio.static.json";
 import { fetchPortfolio } from "./api";
+import { useLang } from "./lang";
+import { localizePortfolio } from "./localize";
 import type { Portfolio } from "./types";
 
 export type DataSource = "static" | "snapshot" | "api";
@@ -48,7 +50,15 @@ export function PortfolioProvider({ children, initial }: { children: ReactNode; 
     return () => ctrl.abort();
   }, []);
 
-  return <Ctx.Provider value={state}>{children}</Ctx.Provider>;
+  // Les traductions sont résolues ici : les composants consomment toujours
+  // `data` dans la langue courante et n'ont pas à connaître i18n.
+  const { lang } = useLang();
+  const value = useMemo(
+    () => ({ data: localizePortfolio(state.data, lang), source: state.source }),
+    [state, lang],
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function usePortfolio(): PortfolioCtx {

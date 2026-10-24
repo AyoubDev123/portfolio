@@ -1,18 +1,27 @@
-const monthYear = new Intl.DateTimeFormat("fr-FR", { month: "short", year: "numeric" });
+import type { Lang } from "./translations";
 
-/** « 2026-09-14 » → « sept. 2026 » */
-export function formatMonth(iso: string): string {
-  // On force midi UTC pour éviter tout décalage de fuseau sur la date seule.
-  return monthYear.format(new Date(`${iso}T12:00:00Z`));
+const LOCALES: Record<Lang, string> = { en: "en-GB", fr: "fr-FR" };
+const TODAY: Record<Lang, string> = { en: "present", fr: "aujourd'hui" };
+
+const formatters: Partial<Record<Lang, Intl.DateTimeFormat>> = {};
+
+function monthYear(lang: Lang): Intl.DateTimeFormat {
+  return (formatters[lang] ??= new Intl.DateTimeFormat(LOCALES[lang], { month: "short", year: "numeric" }));
 }
 
-export function formatPeriod(startIso: string, endIso: string | null, current = false): string {
-  const start = formatMonth(startIso);
-  if (!endIso || current) return `${start} – aujourd'hui`;
-  const end = formatMonth(endIso);
+/** « 2026-09-14 » → « sept. 2026 » (fr) / « Sep 2026 » (en) */
+export function formatMonth(iso: string, lang: Lang): string {
+  // On force midi UTC pour éviter tout décalage de fuseau sur la date seule.
+  return monthYear(lang).format(new Date(`${iso}T12:00:00Z`));
+}
+
+export function formatPeriod(startIso: string, endIso: string | null, current: boolean, lang: Lang): string {
+  const start = formatMonth(startIso, lang);
+  if (!endIso || current) return `${start} – ${TODAY[lang]}`;
+  const end = formatMonth(endIso, lang);
   return start === end ? start : `${start} – ${end}`;
 }
 
-export function uniqueSorted(values: string[]): string[] {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b, "fr"));
+export function uniqueSorted(values: string[], lang: Lang): string[] {
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b, LOCALES[lang]));
 }

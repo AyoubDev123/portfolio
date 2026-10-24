@@ -30,7 +30,34 @@
         "level": "Native"
       }
     ],
-    "metrics": []
+    "metrics": [],
+    "i18n": {
+      "fr": {
+        "headline": "Élève ingénieur @CY Tech (Ex. EISTI) | Alternant @Safran Aircraft Engines | IA & Analytics Engineering",
+        "tagline": "Je travaille sur l'IA appliquée à des cas d'usage aéronautiques. Expérience en IA générative, modèles de machine learning et solutions data. Ouvert à de nouveaux projets.",
+        "status_label": "Alternant Data Scientist / Engineer · Safran Aircraft Engines",
+        "city": "Paris et sa région",
+        "about": [
+          "Élève ingénieur en mathématiques appliquées à CY Tech (en alternance, 2026–2029), je suis alternant Data Scientist / Engineer chez Safran Aircraft Engines.",
+          "Après un BUT Science des données à l'Université de Lille, j'ai travaillé sur toute la chaîne de valeur de la donnée : l'ingénierie (ETL, entrepôts de données, NoSQL), la modélisation (statistique, machine learning, deep learning) et la restitution (BI, data visualisation).",
+          "Mes stages chez Inventiv IT (chatbot juridique RAG) puis au Renault Group (chatbots supply chain) m'ont confronté concrètement aux LLM, à la recherche sémantique et au prompt engineering."
+        ],
+        "languages": [
+          {
+            "name": "Français",
+            "level": "Langue maternelle"
+          },
+          {
+            "name": "Anglais",
+            "level": "C1 (EF SET)"
+          },
+          {
+            "name": "Arabe",
+            "level": "Langue maternelle"
+          }
+        ]
+      }
+    }
   },
   "experiences": [
     {
@@ -49,7 +76,14 @@
         "Python",
         "Data Analysis"
       ],
-      "position": 0
+      "position": 0,
+      "i18n": {
+        "fr": {
+          "role": "Data Scientist – Support et services à l'ingénierie",
+          "contract": "Alternance",
+          "summary": "Je porte plusieurs casquettes : Data Scientist, Data Engineer et Data Steward."
+        }
+      }
     },
     {
       "slug": "renault",
@@ -75,7 +109,21 @@
         "Office Scripts",
         "VBA"
       ],
-      "position": 1
+      "position": 1,
+      "i18n": {
+        "fr": {
+          "role": "Développeur Data & IA – Supply Chain Inbound",
+          "contract": "Stage",
+          "summary": "Développement de chatbots Supply Chain en environnement grand compte et construction de modèles de machine learning pour la prédiction du prix des flux logistiques.",
+          "highlights": [
+            "Développement de chatbots Supply Chain en environnement grand compte (Copilot Studio)",
+            "Construction de modèles de machine learning pour la prédiction du prix des flux logistiques (Dataiku / Python, préparation des données, modèles de régression)",
+            "Modélisation statistique et économétrique pour analyser et interpréter les structures de coûts (Dataiku / Python)",
+            "Développement de POC de visualisation des flux et réseaux logistiques (Python / Spotfire)",
+            "Automatisation des traitements et analyse de données sous Excel (Office Scripts, VBA)"
+          ]
+        }
+      }
     },
     {
       "slug": "inventiv-it",
@@ -101,7 +149,21 @@
         "Mistral",
         "Gradio"
       ],
-      "position": 2
+      "position": 2,
+      "i18n": {
+        "fr": {
+          "role": "Consultant Data & IA – R&D",
+          "contract": "Stage",
+          "summary": "IA – Développement d'un POC de chatbot juridique en RAG.",
+          "highlights": [
+            "Sourcing des données et récupération de documents juridiques",
+            "Sélection de variables et prétraitement du texte pour les tâches de NLP",
+            "Choix des embeddings et des modèles / LLM (CamemBERT, Mistral, Gemini)",
+            "Indexation vectorielle et mise en place du pipeline de recherche (FAISS)",
+            "Interface Gradio pour tester et évaluer le chatbot"
+          ]
+        }
+      }
     }
   ],
   "projects": [
@@ -167,6 +229,31 @@
       "links": [],
       "featured": false,
       "position": 0,
+      "i18n": {
+        "fr": {
+          "title": "Prédiction de la valeur foncière",
+          "subtitle": "Outil d'aide à la décision, modélisation statistique et IA sur plus de 20 millions de lignes",
+          "period": "sept. 2025 – févr. 2026",
+          "context": "BUT Science des données · Université de Lille",
+          "summary": "Du data engineering à la restitution : un pipeline sur +20M de transactions, trois familles de modèles comparées et un tableau de bord d'aide à la décision.",
+          "description": [
+            "Un projet de bout en bout autour des transactions immobilières : data engineering sur plus de 20 millions de lignes, puis modélisation pour prédire les valeurs foncières.",
+            "Côté ingénierie, un processus ETL alimente un entrepôt de données et une couche NoSQL. Côté modélisation, trois approches sont comparées : statistique, machine learning et deep learning.",
+            "Les résultats sont restitués dans un tableau de bord (nombre de ventes, prix au m², valeur foncière totale par commune) et une analyse SHAP sur 2 000 biens éclaire l'impact de chaque variable sur le prix."
+          ],
+          "highlights": [
+            "+20M de lignes traitées",
+            "Pipeline ETL, entrepôt de données et NoSQL",
+            "Statistique vs machine learning vs deep learning",
+            "Interprétabilité des prédictions avec SHAP"
+          ],
+          "tags": [
+            "Data Engineering",
+            "Machine Learning",
+            "BI & DataViz"
+          ]
+        }
+      },
       "experience": null
     },
     {
@@ -205,6 +292,28 @@
       "links": [],
       "featured": false,
       "position": 1,
+      "i18n": {
+        "fr": {
+          "title": "Scoring de crédit et déploiement",
+          "subtitle": "Des modèles de machine learning expliqués par SHAP, dans un simulateur interactif",
+          "period": "nov. – déc. 2025",
+          "context": "BUT Science des données · Data Mining",
+          "summary": "Un processus de data mining complet, de l'entraînement des modèles au déploiement d'un simulateur qui explique chacune de ses décisions.",
+          "description": [
+            "Un processus de data mining complet : entraînement de modèles de machine learning pour le scoring de crédit, puis déploiement dans un simulateur interactif.",
+            "Le simulateur prend six variables clés (capital restant dû, taux d'intérêt, diversité des crédits, revenu annuel, retard moyen, taux d'utilisation du crédit) et affiche la décision accompagnée d'un graphique SHAP montrant le poids de chaque variable."
+          ],
+          "highlights": [
+            "Entraînement de modèles de machine learning pour le scoring de crédit",
+            "Déploiement dans une interface Gradio interactive",
+            "Décisions explicables : impact des variables via SHAP"
+          ],
+          "tags": [
+            "Machine Learning",
+            "IA"
+          ]
+        }
+      },
       "experience": null
     },
     {
@@ -240,6 +349,26 @@
       "links": [],
       "featured": false,
       "position": 4,
+      "i18n": {
+        "fr": {
+          "title": "Migration SQL vers NoSQL",
+          "subtitle": "De SQLite à MongoDB et Neo4j",
+          "period": "nov. – déc. 2025",
+          "context": "BUT Science des données · Bases de données",
+          "summary": "Migration d'une base relationnelle vers un modèle documentaire (MongoDB) et un modèle graphe (Neo4j).",
+          "description": [
+            "Migration d'une base relationnelle SQLite vers deux modèles NoSQL : MongoDB pour le documentaire et Neo4j pour le graphe.",
+            "Le modèle graphe rend les relations entre entités directement interrogeables, là où une base relationnelle passe par des jointures."
+          ],
+          "highlights": [
+            "Passage d'un schéma relationnel à un modèle documentaire",
+            "Modélisation en graphe avec Neo4j"
+          ],
+          "tags": [
+            "Data Engineering"
+          ]
+        }
+      },
       "experience": null
     }
   ],
@@ -251,7 +380,13 @@
       "description": "Focus on Applied Mathematics and Data Science.",
       "start_year": 2026,
       "end_year": 2029,
-      "position": 0
+      "position": 0,
+      "i18n": {
+        "fr": {
+          "degree": "Diplôme d'ingénieur, Mathématiques appliquées",
+          "description": "Spécialisation en mathématiques appliquées et science des données."
+        }
+      }
     },
     {
       "school": "University of Lille",
@@ -259,7 +394,14 @@
       "description": "Graduated with Honours · 3.7 GPA. \nFocus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design. \nCore Courses: Statistics, Big Data, AI, BI, Data Engineering. Activities: Hackathon, surveys, seminar organization.",
       "start_year": 2023,
       "end_year": 2026,
-      "position": 1
+      "position": 1,
+      "i18n": {
+        "fr": {
+          "school": "Université de Lille",
+          "degree": "BUT Science des données",
+          "description": "Diplômé avec mention · moyenne 3.7/4. \nSpécialisation en statistiques, business intelligence, data visualisation et conception d'outils d'aide à la décision. \nEnseignements principaux : statistiques, big data, IA, BI, data engineering. Activités : hackathon, enquêtes, organisation de séminaires."
+        }
+      }
     },
     {
       "school": "En-nour 1 High School",
@@ -267,7 +409,14 @@
       "description": "Graduated with Highest Honors. \nCore Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography. Activities: Travel organization, Mathematics tutoring, association internship, theater.",
       "start_year": 2020,
       "end_year": 2023,
-      "position": 2
+      "position": 2,
+      "i18n": {
+        "fr": {
+          "school": "Lycée En-nour 1",
+          "degree": "Baccalauréat scientifique, spécialité physique-chimie",
+          "description": "Diplômé avec mention très bien. \nEnseignements principaux : mathématiques, physique-chimie, philosophie, sciences de la vie et de la Terre, langues, histoire-géographie. Activités : organisation de voyages, tutorat en mathématiques, stage associatif, théâtre."
+        }
+      }
     }
   ],
   "certifications": [
@@ -276,42 +425,75 @@
       "issuer": "EF SET",
       "date_label": "February 2026",
       "kind": "certification",
-      "position": 0
+      "position": 0,
+      "i18n": {
+        "fr": {
+          "date_label": "février 2026"
+        }
+      }
     },
     {
       "name": "MOOC L'Atelier RGPD",
       "issuer": "CNIL",
       "date_label": "January 2025",
       "kind": "certification",
-      "position": 1
+      "position": 1,
+      "i18n": {
+        "fr": {
+          "date_label": "janvier 2025"
+        }
+      }
     },
     {
       "name": "Learning AI Through Visualization",
       "issuer": "Columbia+",
       "date_label": "October 2025",
       "kind": "certification",
-      "position": 2
+      "position": 2,
+      "i18n": {
+        "fr": {
+          "name": "Apprendre l'IA par la visualisation",
+          "date_label": "octobre 2025"
+        }
+      }
     },
     {
       "name": "Academy Accreditation - Databricks Fundamentals",
       "issuer": "Databricks",
       "date_label": "June 2025",
       "kind": "certification",
-      "position": 3
+      "position": 3,
+      "i18n": {
+        "fr": {
+          "date_label": "juin 2025"
+        }
+      }
     },
     {
       "name": "Academy Accreditation - Generative AI Fundamentals",
       "issuer": "Databricks",
       "date_label": "April 2025",
       "kind": "certification",
-      "position": 4
+      "position": 4,
+      "i18n": {
+        "fr": {
+          "date_label": "avril 2025"
+        }
+      }
     },
     {
       "name": "DataViz Hackathon · 2nd place",
       "issuer": "Enedis, Météo-France and IUT de Lille",
       "date_label": "May 2024",
       "kind": "distinction",
-      "position": 5
+      "position": 5,
+      "i18n": {
+        "fr": {
+          "name": "Hackathon DataViz · 2e place",
+          "issuer": "Enedis, Météo-France et IUT de Lille",
+          "date_label": "mai 2024"
+        }
+      }
     }
   ],
   "interests": []
