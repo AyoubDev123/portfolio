@@ -11,23 +11,26 @@
     ],
     "status_label": "Apprentice Data Scientist / Engineer · Safran Aircraft Engines",
     "email": "ayoub.elabbassi05@gmail.com",
-    "city": "Paris & surroundings · Paris et périphérie",
-    "linkedin": "",
+    "city": "Paris & surroundings",
+    "linkedin": "www.linkedin.com/in/ayoub-el-abbassi-profile",
     "github": "",
     "photo": "/images/profile.webp",
     "cv_url": "/cv/CV_Ayoub_El_Abbassi.pdf",
     "languages": [
-      { "name": "French", "level": "Native/Bilingual" },
-      { "name": "English", "level": "C1 (EF SET)" },
-      { "name": "Arabic", "level": "Native" }
+      {
+        "name": "French",
+        "level": "Native/Bilingual"
+      },
+      {
+        "name": "English",
+        "level": "C1 (EF SET)"
+      },
+      {
+        "name": "Arabic",
+        "level": "Native"
+      }
     ],
-    "metrics": [
-      { "value": "Machine Learning", "label": "" },
-      { "value": "Big Data", "label": "" },
-      { "value": "Generative AI", "label": "" },
-      { "value": "Deep Learning", "label": "" },
-      { "value": "Data Engineering", "label": "" }
-    ],
+    "metrics": [],
     "id": 1
   },
   "experiences": [
@@ -39,11 +42,14 @@
       "location": "Montereau-sur-le-Jard, Île-de-France, France",
       "start_date": "2026-09-01",
       "end_date": null,
-      "summary": "Working as data scientist / data engineer / data steward within the Engineering Support & Services division.",
-      "highlights": [
-        "Missions as data scientist, data engineer and data steward."
+      "summary": "I wear multiple hats as a Data Scientist, Data Engineer, and Data Steward.",
+      "highlights": [],
+      "stack": [
+        "AWS",
+        "Git",
+        "Python",
+        "Data Analysis"
       ],
-      "stack": [],
       "position": 0,
       "id": 1,
       "current": true,
@@ -65,11 +71,18 @@
         "Developed POCs for data visualization of logistics flows and networks (Python / Spotfire)",
         "Automated data processing and performed data analysis using Excel (Office Scripts, VBA)"
       ],
-      "stack": ["Copilot Studio", "Dataiku", "Python", "Spotfire", "Office Scripts", "VBA"],
+      "stack": [
+        "Copilot Studio",
+        "Dataiku",
+        "Python",
+        "Spotfire",
+        "Office Scripts",
+        "VBA"
+      ],
       "position": 1,
       "id": 2,
       "current": false,
-      "project_slugs": ["chatbots-supply-chain"]
+      "project_slugs": []
     },
     {
       "slug": "inventiv-it",
@@ -87,11 +100,18 @@
         "Vector indexing and retrieval pipeline implementation (FAISS)",
         "Gradio interface for chatbot testing and evaluation"
       ],
-      "stack": ["Python", "CamemBERT", "FAISS", "Gemini", "Mistral", "Gradio"],
+      "stack": [
+        "Python",
+        "CamemBERT",
+        "FAISS",
+        "Gemini",
+        "Mistral",
+        "Gradio"
+      ],
       "position": 2,
       "id": 3,
       "current": false,
-      "project_slugs": ["rag-juridique"]
+      "project_slugs": []
     }
   ],
   "projects": [
@@ -113,14 +133,46 @@
         "Statistical vs machine learning vs deep learning",
         "Prediction interpretability with SHAP"
       ],
-      "stack": ["Python", "SQL", "ETL", "Datawarehouse", "NoSQL", "Power BI", "SHAP"],
-      "tags": ["Data Engineering", "Machine Learning", "BI & DataViz"],
+      "stack": [
+        "Python",
+        "SQL",
+        "ETL",
+        "Datawarehouse",
+        "NoSQL",
+        "Power BI",
+        "SHAP"
+      ],
+      "tags": [
+        "Data Engineering",
+        "Machine Learning",
+        "BI & DataViz"
+      ],
       "images": [
-        { "src": "/images/projets/dataviz.webp", "alt": "Land value dashboard", "caption": "Overview: sales map, price per m² by year, land value by municipality" },
-        { "src": "/images/projets/dataviz4.webp", "alt": "Second dark dashboard", "caption": "Second dashboard: maps by département, volume trends, top municipalities" },
-        { "src": "/images/projets/dataviz2.webp", "alt": "Price per m² by region", "caption": "Price per m² and land value by region" },
-        { "src": "/images/projets/dataviz3.webp", "alt": "Breakdown by transfer type", "caption": "Breakdown by transfer type and number of rooms" },
-        { "src": "/images/projets/shap.webp", "alt": "SHAP chart", "caption": "SHAP analysis: variable impact on price (2,000 properties)" }
+        {
+          "src": "/images/projets/dataviz.webp",
+          "alt": "Land value dashboard",
+          "caption": "Overview: sales map, price per m² by year, land value by municipality"
+        },
+        {
+          "src": "/images/projets/dataviz4.webp",
+          "alt": "Second dark dashboard",
+          "caption": "Second dashboard: maps by département, volume trends, top municipalities"
+        },
+        {
+          "src": "/images/projets/dataviz2.webp",
+          "alt": "Price per m² by region",
+          "caption": "Price per m² and land value by region"
+        },
+        {
+          "src": "/images/projets/dataviz3.webp",
+          "alt": "Breakdown by transfer type",
+          "caption": "Breakdown by transfer type and number of rooms"
+        },
+        {
+          "src": "/images/projets/shap.webp",
+          "alt": "SHAP chart",
+          "caption": "SHAP analysis: variable impact on price (2,000 properties)"
+        }
       ],
       "links": [],
       "featured": false,
@@ -145,10 +197,22 @@
         "Deployed in an interactive Gradio interface",
         "Explainable decisions: variable impact via SHAP"
       ],
-      "stack": ["Python", "Machine Learning", "SHAP", "Gradio"],
-      "tags": ["Machine Learning", "AI"],
+      "stack": [
+        "Python",
+        "Machine Learning",
+        "SHAP",
+        "Gradio"
+      ],
+      "tags": [
+        "Machine Learning",
+        "AI"
+      ],
       "images": [
-        { "src": "/images/projets/sellami.webp", "alt": "Credit simulator", "caption": "Simulator: decision and SHAP explanation" }
+        {
+          "src": "/images/projets/sellami.webp",
+          "alt": "Credit simulator",
+          "caption": "Simulator: decision and SHAP explanation"
+        }
       ],
       "links": [],
       "featured": false,
@@ -156,63 +220,6 @@
       "experience_id": null,
       "id": 2,
       "experience_slug": null
-    },
-    {
-      "slug": "rag-juridique",
-      "title": "Legal RAG Chatbot for Lawyers",
-      "subtitle": "Semantic search over French law",
-      "period": "Apr. – Jun. 2025",
-      "context": "Internship · Inventiv IT (R&D)",
-      "summary": "A RAG assistant that retrieves relevant passages from French law via semantic search before having an LLM generate the answer.",
-      "description": [
-        "Design of a RAG (Retrieval-Augmented Generation) chatbot for lawyers: the question is vectorised, the closest passages of law are retrieved from an index, then provided as context to an LLM.",
-        "An embedding model benchmark was conducted, with CamemBERT achieving +60% accuracy. The system is exposed via a Gradio interface."
-      ],
-      "highlights": [
-        "Encoding of +800K lines of French law",
-        "Embeddings benchmark: CamemBERT, +60% accuracy",
-        "FAISS vector index for semantic search",
-        "Prompt engineering (Gemini) and Gradio interface"
-      ],
-      "stack": ["Python", "CamemBERT", "FAISS", "Gemini", "Mistral", "Gradio"],
-      "tags": ["AI & LLM", "NLP"],
-      "images": [
-        { "src": "/images/projets/rag-juridique.svg", "alt": "RAG pipeline diagram", "caption": "Simplified pipeline: indexing French law, then querying" }
-      ],
-      "links": [],
-      "featured": false,
-      "position": 2,
-      "experience_id": 3,
-      "id": 3,
-      "experience_slug": "inventiv-it"
-    },
-    {
-      "slug": "chatbots-supply-chain",
-      "title": "Internal Supply Chain Chatbots",
-      "subtitle": "RAG over SharePoint documents for inbound supply chain",
-      "period": "Mar. – Jun. 2026",
-      "context": "Internship · Renault Group",
-      "summary": "Internal chatbots powered by a corpus built from Excel files and SharePoint, queryable via multiple LLMs.",
-      "description": [
-        "Development of internal chatbots for the supply chain. The corpus is built by converting Excel files to JSON with VBA, then indexed from SharePoint using OpenAI's text-embedding-3-large model.",
-        "Prompt engineering was conducted across multiple LLMs: Gemini, GPT and Mistral."
-      ],
-      "highlights": [
-        "Corpus: Excel to JSON with VBA",
-        "Indexing from SharePoint, text-embedding-3-large",
-        "Multi-LLM prompt engineering: Gemini, GPT, Mistral"
-      ],
-      "stack": ["VBA", "JSON", "SharePoint", "OpenAI Embeddings", "Gemini", "GPT", "Mistral"],
-      "tags": ["AI & LLM", "Data Engineering"],
-      "images": [
-        { "src": "/images/projets/chatbots-supply-chain.svg", "alt": "Supply chain chatbot pipeline", "caption": "Simplified pipeline: corpus preparation, then querying" }
-      ],
-      "links": [],
-      "featured": false,
-      "position": 3,
-      "experience_id": 2,
-      "id": 4,
-      "experience_slug": "renault"
     },
     {
       "slug": "migration-nosql",
@@ -229,43 +236,26 @@
         "Moving from a relational schema to a document model",
         "Graph modelling with Neo4j"
       ],
-      "stack": ["SQLite", "MongoDB", "Neo4j"],
-      "tags": ["Data Engineering"],
+      "stack": [
+        "SQLite",
+        "MongoDB",
+        "Neo4j"
+      ],
+      "tags": [
+        "Data Engineering"
+      ],
       "images": [
-        { "src": "/images/projets/neo4j.webp", "alt": "Neo4j graph", "caption": "Graph visualisation in Neo4j" }
+        {
+          "src": "/images/projets/neo4j.webp",
+          "alt": "Neo4j graph",
+          "caption": "Graph visualisation in Neo4j"
+        }
       ],
       "links": [],
       "featured": false,
       "position": 4,
       "experience_id": null,
       "id": 5,
-      "experience_slug": null
-    },
-    {
-      "slug": "portfolio",
-      "title": "This Portfolio: from PHP/MySQL to React/FastAPI",
-      "subtitle": "Two versions, one shared content base",
-      "period": "2026",
-      "context": "Final-year project (BUT S6), then personal rebuild",
-      "summary": "v1 (PHP/MySQL, defended on 10/02/2026) was rebuilt as a decoupled architecture: a tested FastAPI back-end and a React/TypeScript front end.",
-      "description": [
-        "Version 1 (defended on 10/02/2026): PHP/MySQL site with MCD/MLD modelling, CRUD back-office, filters and project pages, built over four months with generative AI tools (Claude Code, Gemini).",
-        "Version 2, what you're viewing now: a REST FastAPI API (SQLAlchemy, JWT, pytest tests) and a React/TypeScript front end, containerised with Docker and verified by GitHub Actions CI."
-      ],
-      "highlights": [
-        "Typed REST API: FastAPI and Pydantic v2",
-        "HttpOnly cookie auth, rate limiting, token revocation",
-        "Automated pytest tests and GitHub Actions CI",
-        "Responsive, accessible front end with light and dark themes"
-      ],
-      "stack": ["React", "TypeScript", "Vite", "Tailwind CSS", "FastAPI", "SQLAlchemy", "SQLite", "Docker", "GitHub Actions", "pytest"],
-      "tags": ["Web Development"],
-      "images": [],
-      "links": [],
-      "featured": false,
-      "position": 5,
-      "experience_id": null,
-      "id": 6,
       "experience_slug": null
     }
   ],
@@ -274,16 +264,16 @@
     {
       "school": "CY Tech",
       "degree": "Master of Engineering (MEng), Applied Mathematics",
-      "description": "First year.\nFocus on Applied Mathematics and Data Science.",
+      "description": "Focus on Applied Mathematics and Data Science.",
       "start_year": 2026,
       "end_year": 2029,
       "position": 0,
       "id": 1
     },
     {
-      "school": "Université de Lille",
+      "school": "University of Lille",
       "degree": "Bachelor of Technology (BSc), Data Science",
-      "description": "Graduated with Honours · 3.7 GPA.\nFocus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design.\nCore Courses: Statistics, Big Data, AI, BI, Data Engineering.\nActivities: Hackathon, surveys, seminar organization.",
+      "description": "Graduated with Honours · 3.7 GPA. \nFocus on Statistics, Business Intelligence, Data Visualization and Decision-Support Tool Design. \nCore Courses: Statistics, Big Data, AI, BI, Data Engineering. Activities: Hackathon, surveys, seminar organization.",
       "start_year": 2023,
       "end_year": 2026,
       "position": 1,
@@ -292,7 +282,7 @@
     {
       "school": "En-nour 1 High School",
       "degree": "Scientific Baccalaureate, Physics and Chemistry Track",
-      "description": "Graduated with Highest Honors.\nCore Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography.\nActivities: Travel organization, Mathematics tutoring, association internship, theater.",
+      "description": "Graduated with Highest Honors. \nCore Courses: Mathematics, Physics and Chemistry, Philosophy, Biology and Earth Science, Languages, History and Geography. Activities: Travel organization, Mathematics tutoring, association internship, theater.",
       "start_year": 2020,
       "end_year": 2023,
       "position": 2,
