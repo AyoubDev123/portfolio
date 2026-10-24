@@ -8,6 +8,14 @@
       "cwd": "Front-end",
       "port": 5173,
       "url": "http://localhost:5173"
+    },
+    {
+      "name": "portfolio-api",
+      "runtimeExecutable": "C:\\Users\\ayoub\\OneDrive\\Documents\\portfolio-final\\Back-end\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
+      "cwd": "Back-end",
+      "port": 8000,
+      "url": "http://localhost:8000"
     }
   ]
 }
