@@ -1,7 +1,7 @@
 from app import models
 from app.database import make_engine, make_session_factory
 from app.security import hash_password, verify_password
-from app.seed import is_seeded, seed
+from app.seed import is_seeded, load_content, seed
 
 
 def _db():
@@ -11,20 +11,23 @@ def _db():
 
 
 def test_seed_is_idempotent():
+    expected = len(load_content()["projects"])
     with _db() as db:
         assert is_seeded(db) is False
         assert seed(db) is True
         assert seed(db) is False  # 2e appel : rien n'est dupliqué
-        assert db.query(models.Project).count() == 6
+        assert db.query(models.Project).count() == expected
 
 
 def test_seed_reset_reloads():
+    expected = len(load_content()["projects"])
     with _db() as db:
         seed(db)
-        db.query(models.Project).filter_by(slug="portfolio").delete()
+        db.query(models.Project).delete()
         db.commit()
+        assert db.query(models.Project).count() == 0
         assert seed(db, reset=True) is True
-        assert db.query(models.Project).filter_by(slug="portfolio").count() == 1
+        assert db.query(models.Project).count() == expected
 
 
 def test_password_hashing():

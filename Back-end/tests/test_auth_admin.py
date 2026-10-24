@@ -104,8 +104,14 @@ def test_experience_dates_validated(auth_client: TestClient):
 def test_deleting_experience_keeps_projects(auth_client: TestClient):
     exps = auth_client.get("/api/admin/experiences").json()
     inventiv = next(e for e in exps if e["slug"] == "inventiv-it")
+    created = auth_client.post(
+        "/api/admin/projects",
+        json={**NEW_PROJECT, "slug": "lien-suppression", "experience_id": inventiv["id"]},
+    )
+    assert created.status_code == 201
+
     assert auth_client.delete(f"/api/admin/experiences/{inventiv['id']}").status_code == 204
-    proj = auth_client.get("/api/projects/rag-juridique").json()
+    proj = auth_client.get("/api/projects/lien-suppression").json()
     assert proj["experience_slug"] is None  # ON DELETE SET NULL
 
 

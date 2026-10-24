@@ -37,19 +37,26 @@ def test_current_experience_flag(client):
     assert exps["renault"]["current"] is False
 
 
-def test_projects_linked_to_experiences(client):
+def test_projects_linked_to_experiences(client, auth_client):
+    inventiv = next(e for e in auth_client.get("/api/admin/experiences").json() if e["slug"] == "inventiv-it")
+    created = auth_client.post(
+        "/api/admin/projects",
+        json={"slug": "lien-test", "title": "Lien test", "experience_id": inventiv["id"]},
+    )
+    assert created.status_code == 201
+
     data = client.get("/api/portfolio").json()
     by_slug = {p["slug"]: p for p in data["projects"]}
-    assert by_slug["rag-juridique"]["experience_slug"] == "inventiv-it"
+    assert by_slug["lien-test"]["experience_slug"] == "inventiv-it"
     assert by_slug["valeur-fonciere"]["experience_slug"] is None
-    inventiv = next(e for e in data["experiences"] if e["slug"] == "inventiv-it")
-    assert inventiv["project_slugs"] == ["rag-juridique"]
+    inventiv_out = next(e for e in data["experiences"] if e["slug"] == "inventiv-it")
+    assert inventiv_out["project_slugs"] == ["lien-test"]
 
 
 def test_get_project_and_404(client):
     ok = client.get("/api/projects/valeur-fonciere")
     assert ok.status_code == 200
-    assert ok.json()["title"].startswith("Prédiction")
+    assert ok.json()["title"].startswith("Land Value")
     assert client.get("/api/projects/inconnu").status_code == 404
 
 
@@ -70,8 +77,17 @@ def test_seed_content_is_consistent():
             assert img["alt"], f"alt manquant dans {p['slug']}"
 
 
+def _strip_ids(value):
+    """Retire les id (artefacts d'auto-increment qui divergent après des suppressions) avant comparaison."""
+    if isinstance(value, dict):
+        return {k: _strip_ids(v) for k, v in value.items() if k != "id"}
+    if isinstance(value, list):
+        return [_strip_ids(v) for v in value]
+    return value
+
+
 @pytest.mark.skipif(not Path(DEFAULT_OUT).parent.exists(), reason="Front-end absent (build Docker back-end seul)")
 def test_static_export_is_in_sync():
     """Si ce test échoue : `python -m app.export_static` puis commit."""
     committed = json.loads(Path(DEFAULT_OUT).read_text(encoding="utf-8"))
-    assert committed == json.loads(render_static_json())
+    assert _strip_ids(committed) == _strip_ids(json.loads(render_static_json()))
