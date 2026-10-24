@@ -499,6 +499,7 @@ interface Message {
 function Messages({ onAuthError }: { onAuthError: () => void }) {
   const [rows, setRows] = useState<Message[] | null>(null);
   const [error, setError] = useState("");
+  const [confirmId, setConfirmId] = useState<number | null>(null);
   const guard = useGuard(onAuthError);
 
   const load = useCallback(() => {
@@ -559,14 +560,29 @@ function Messages({ onAuthError }: { onAuthError: () => void }) {
                     Marquer comme lu
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="btn btn-ghost !p-2.5"
-                  aria-label={`Supprimer le message de ${m.name}`}
-                  onClick={() => admin.remove("messages", m.id).then(load).catch((e) => setError(guard(e)))}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                {confirmId === m.id ? (
+                  <button
+                    type="button"
+                    className="btn !bg-red-600 !py-2 text-white"
+                    onClick={() => {
+                      setConfirmId(null);
+                      admin.remove("messages", m.id).then(load).catch((e) => setError(guard(e)));
+                    }}
+                    onBlur={() => setConfirmId(null)}
+                    autoFocus
+                  >
+                    Confirmer
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-ghost !p-2.5"
+                    aria-label={`Supprimer le message de ${m.name}`}
+                    onClick={() => setConfirmId(m.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             </div>
             <p className="mt-3 whitespace-pre-wrap text-[0.95rem]">{m.message}</p>
