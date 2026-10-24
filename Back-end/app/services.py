@@ -10,7 +10,9 @@ from . import models, schemas
 
 def _experience_out(e: models.Experience) -> schemas.ExperienceRead:
     out = schemas.ExperienceRead.model_validate(e)
-    out.current = e.end_date is None or e.end_date >= date.today()
+    today = date.today()
+    # Un poste qui ne commence que plus tard n'est pas « en cours ».
+    out.current = e.start_date <= today and (e.end_date is None or e.end_date >= today)
     out.project_slugs = [p.slug for p in sorted(e.projects, key=lambda p: (p.position, p.id))]
     return out
 

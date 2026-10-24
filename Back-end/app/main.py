@@ -3,10 +3,13 @@
 import logging
 from collections.abc import Awaitable, Callable
 from contextlib import asynccontextmanager
+from pathlib import Path
 
+from alembic import command
+from alembic.config import Config
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
+from sqlalchemy import Engine, inspect, select
 
 from . import models
 from .config import Settings, get_settings
@@ -16,6 +19,29 @@ from .security import RateLimiter, hash_password
 from .seed import seed
 
 log = logging.getLogger("portfolio")
+
+
+def init_schema(engine: Engine) -> None:
+    """Crée le schéma manquant, puis marque la base comme à jour pour Alembic.
+
+    Sans ce stamp, une base créée par l'application (dev : `uvicorn app.main:app`,
+    sans passer par le Dockerfile qui lance `alembic upgrade head`) n'a pas de
+    ligne alembic_version : la prochaine migration rejouerait 0001 sur des tables
+    qui existent déjà et échouerait.
+    """
+    fresh = not inspect(engine).has_table("alembic_version")
+    models.Base.metadata.create_all(engine)
+
+    # Une base en mémoire disparaît avec le process : rien à stamper.
+    if not fresh or engine.url.database in (None, ":memory:"):
+        return
+
+    cfg = Config(str(Path(__file__).resolve().parents[1] / "alembic.ini"))
+    # set_main_option passe par configparser, qui interprète « % » : un chemin
+    # Windows encodé (C%3A/...) ou un mot de passe contenant % casserait sinon.
+    url = engine.url.render_as_string(hide_password=False).replace("%", "%%")
+    cfg.set_main_option("sqlalchemy.url", url)
+    command.stamp(cfg, "head")
 
 
 def bootstrap_admin(db, settings: Settings) -> None:
@@ -38,7 +64,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI):
-        models.Base.metadata.create_all(engine)
+        init_schema(engine)
         with session_factory() as db:
             if settings.seed_on_startup:
                 seed(db)

@@ -21,7 +21,10 @@ target_metadata = Base.metadata
 
 # Surcharge sqlalchemy.url avec DATABASE_URL si défini.
 db_url = os.getenv("DATABASE_URL", config.get_main_option("sqlalchemy.url") or "")
-config.set_main_option("sqlalchemy.url", db_url)
+# set_main_option passe la valeur à configparser, qui interprète « % ». Sans
+# échappement, un mot de passe PostgreSQL contenant % ou un chemin Windows
+# encodé (C%3A/...) fait échouer toutes les migrations.
+config.set_main_option("sqlalchemy.url", db_url.replace("%", "%%"))
 
 
 def run_migrations_offline() -> None:
