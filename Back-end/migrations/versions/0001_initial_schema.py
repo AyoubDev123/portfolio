@@ -9,16 +9,17 @@ pas déjà. Pour une base existante d'avant l'ajout d'Alembic, il suffit de lanc
 `alembic stamp 0001` pour la marquer comme déjà appliquée, puis `alembic upgrade head`
 pour appliquer les migrations suivantes.
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import inspect
 
 revision: str = "0001"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -81,7 +82,9 @@ def upgrade() -> None:
             sa.Column("links", sa.JSON(), nullable=False),
             sa.Column("featured", sa.Boolean(), nullable=False, server_default="0"),
             sa.Column("position", sa.Integer(), nullable=False, server_default="0"),
-            sa.Column("experience_id", sa.Integer(), sa.ForeignKey("experience.id", ondelete="SET NULL"), nullable=True),
+            sa.Column(
+                "experience_id", sa.Integer(), sa.ForeignKey("experience.id", ondelete="SET NULL"), nullable=True
+            ),
         )
         op.create_index("ix_project_slug", "project", ["slug"])
 

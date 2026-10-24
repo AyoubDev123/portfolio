@@ -23,11 +23,11 @@ def _set_auth_cookie(response: Response, token: str, expires_in: int, secure: bo
     response.set_cookie(
         key=COOKIE_NAME,
         value=token,
-        httponly=True,           # inaccessible à JavaScript → protège contre le vol par XSS
-        secure=secure,           # HTTPS uniquement en production
-        samesite="strict",       # bloque le CSRF cross-site
+        httponly=True,  # inaccessible à JavaScript → protège contre le vol par XSS
+        secure=secure,  # HTTPS uniquement en production
+        samesite="strict",  # bloque le CSRF cross-site
         max_age=expires_in,
-        path="/api",             # scope minimal : pas envoyé pour les assets statiques
+        path="/api",  # scope minimal : pas envoyé pour les assets statiques
     )
 
 
@@ -76,6 +76,7 @@ def logout(
             # Insère le JTI en blocklist pour invalider immédiatement ce token.
             if not db.scalars(select(models.TokenBlocklist).where(models.TokenBlocklist.jti == jti)).first():
                 from datetime import timedelta
+
                 expires_at = datetime.now(UTC) + timedelta(minutes=settings.access_token_minutes)
                 db.add(models.TokenBlocklist(jti=jti, expires_at=expires_at))
                 db.commit()

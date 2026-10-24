@@ -4,15 +4,16 @@ Revision ID: 0002
 Revises: 0001
 Create Date: 2026-10-03
 """
-from typing import Sequence, Union
+
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
 
 revision: str = "0002"
-down_revision: Union[str, None] = "0001"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "0001"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 _TIMESTAMP_DEFAULT = sa.text("(strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")
 _CONTENT_TABLES = ("experience", "project", "skill_group", "education", "certification", "interest")
@@ -39,9 +40,7 @@ def upgrade() -> None:
 
     # --- is_read sur contact_message -------------------------------------------
     with op.batch_alter_table("contact_message") as batch_op:
-        batch_op.add_column(
-            sa.Column("is_read", sa.Boolean(), nullable=False, server_default="0")
-        )
+        batch_op.add_column(sa.Column("is_read", sa.Boolean(), nullable=False, server_default="0"))
 
 
 def downgrade() -> None:

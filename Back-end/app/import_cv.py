@@ -105,8 +105,7 @@ def build(pdf: Path, client: anthropic.Anthropic) -> PortfolioImport:
     usage = response.usage
     cost = usage.input_tokens * 5e-6 + usage.output_tokens * 25e-6
     print(
-        f"{usage.input_tokens} tokens en entrée, {usage.output_tokens} en sortie "
-        f"(~{cost:.2f} $)",
+        f"{usage.input_tokens} tokens en entrée, {usage.output_tokens} en sortie (~{cost:.2f} $)",
         file=sys.stderr,
     )
     return response.parsed_output
