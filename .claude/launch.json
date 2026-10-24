@@ -5,6 +5,7 @@
       "name": "portfolio-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
+      "cwd": "Front-end",
       "port": 5173,
       "url": "http://localhost:5173"
     }
