@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     # Laisser vide pour désactiver (ex. hébergement statique sans volume).
     static_snapshot_path: str = ""
 
+    # Import de CV (python -m app.import_cv). Non utilisé par l'API web.
+    gemini_api_key: str = ""
+
     # Formulaire de contact (SMTP optionnel : sans SMTP, le message est seulement stocké)
     contact_to: str = ""
     smtp_host: str = ""

@@ -6,3 +6,6 @@ __pycache__/
 *.db-shm
 *.db-wal
 .env
+
+# Sortie du POC d import de CV (regenerable)
+app/data/content.generated.json

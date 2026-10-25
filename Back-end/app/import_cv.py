@@ -1,22 +1,25 @@
 """POC : transforme un CV PDF en contenu de portfolio (format app/data/content.json).
 
-    python -m app.import_cv chemin/vers/cv.pdf [-o sortie.json]
+    export GEMINI_API_KEY=...
+    python -m app.import_cv chemin/vers/cv.pdf [-o sortie.json] [--model ...]
 
 Le PDF est envoyé tel quel au modèle (pas d'extraction de texte en amont) : la mise
-en page compte pour comprendre un CV, surtout sur deux colonnes. La sortie est
-contrainte par les schémas Pydantic de l'API, donc elle est soit valide, soit en erreur
-— jamais du JSON approximatif.
+en page porte du sens dans un CV, surtout sur deux colonnes. La sortie est contrainte
+par les schémas Pydantic de l'API, donc elle est soit valide, soit en erreur — jamais
+du JSON approximatif à rattraper.
 """
 
 import argparse
-import base64
 import json
+import os
 import sys
 from pathlib import Path
 
-import anthropic
-from pydantic import BaseModel, Field
+from google import genai
+from google.genai import errors, types
+from pydantic import BaseModel, Field, create_model
 
+from .config import get_settings
 from .schemas import (
     SLUG,
     CertificationBase,
@@ -27,8 +30,18 @@ from .schemas import (
     SkillGroupBase,
 )
 
-MODEL = "claude-opus-5"
+DEFAULT_MODEL = "gemini-3.1-pro-preview"
 DEFAULT_OUT = Path(__file__).parent / "data" / "content.generated.json"
+
+
+def _importable(model: type[BaseModel], name: str) -> type[BaseModel]:
+    """Reprend un schéma de l'API sans son champ i18n.
+
+    Un CV ne contient pas de traductions, et surtout `dict[str, dict]` produit
+    `additionalProperties`, que l'API Gemini refuse dans un response_schema.
+    """
+    fields = {k: (f.annotation, f) for k, f in model.model_fields.items() if k != "i18n"}
+    return create_model(name, **fields)
 
 
 class ProjectImport(BaseModel):
@@ -53,13 +66,13 @@ class ProjectImport(BaseModel):
 
 
 class PortfolioImport(BaseModel):
-    profile: ProfileBase
-    experiences: list[ExperienceBase] = []
+    profile: _importable(ProfileBase, "ProfileImport")
+    experiences: list[_importable(ExperienceBase, "ExperienceImport")] = []
     projects: list[ProjectImport] = []
-    skill_groups: list[SkillGroupBase] = []
-    education: list[EducationBase] = []
-    certifications: list[CertificationBase] = []
-    interests: list[InterestBase] = []
+    skill_groups: list[_importable(SkillGroupBase, "SkillGroupImport")] = []
+    education: list[_importable(EducationBase, "EducationImport")] = []
+    certifications: list[_importable(CertificationBase, "CertificationImport")] = []
+    interests: list[_importable(InterestBase, "InterestImport")] = []
 
 
 PROMPT = """Voici le CV d'un étudiant. Transforme-le en contenu structuré pour son portfolio web.
@@ -83,44 +96,48 @@ Règles :
   rester fidèle au contenu du CV."""
 
 
-def build(pdf: Path, client: anthropic.Anthropic) -> PortfolioImport:
-    data = base64.standard_b64encode(pdf.read_bytes()).decode("utf-8")
-    response = client.messages.parse(
-        model=MODEL,
-        max_tokens=16000,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "document",
-                        "source": {"type": "base64", "media_type": "application/pdf", "data": data},
-                    },
-                    {"type": "text", "text": PROMPT},
-                ],
-            }
-        ],
-        output_format=PortfolioImport,
-    )
-    usage = response.usage
-    cost = usage.input_tokens * 5e-6 + usage.output_tokens * 25e-6
-    print(
-        f"{usage.input_tokens} tokens en entrée, {usage.output_tokens} en sortie (~{cost:.2f} $)",
-        file=sys.stderr,
-    )
-    return response.parsed_output
+def build(pdf: Path, client: genai.Client, model: str) -> PortfolioImport:
+    try:
+        response = client.models.generate_content(
+            model=model,
+            contents=[
+                types.Part.from_bytes(data=pdf.read_bytes(), mime_type="application/pdf"),
+                PROMPT,
+            ],
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=PortfolioImport,
+            ),
+        )
+    except errors.APIError as exc:
+        # Les modèles Gemini sont retirés régulièrement : l'API indique le remplaçant,
+        # autant l'afficher plutôt qu'une trace de 40 lignes.
+        sys.exit(f"Appel refusé par l'API ({exc.code}) : {exc.message}\nAutre modèle : --model <nom>")
+
+    u = response.usage_metadata
+    print(f"{u.prompt_token_count} tokens en entrée, {u.candidates_token_count} en sortie", file=sys.stderr)
+
+    if response.parsed is None:
+        sys.exit(f"Réponse inexploitable du modèle :\n{(response.text or '')[:500]}")
+    return response.parsed
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="CV PDF -> contenu de portfolio")
     parser.add_argument("pdf", type=Path)
     parser.add_argument("-o", "--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument("--model", default=DEFAULT_MODEL, help=f"défaut : {DEFAULT_MODEL}")
     args = parser.parse_args()
 
     if not args.pdf.is_file():
         sys.exit(f"Fichier introuvable : {args.pdf}")
 
-    content = build(args.pdf, anthropic.Anthropic())
+    # La clé vient de l'environnement ou de Back-end/.env, comme les autres secrets.
+    key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or get_settings().gemini_api_key
+    if not key:
+        sys.exit("Aucune clé : renseigne GEMINI_API_KEY dans l'environnement ou dans Back-end/.env.")
+
+    content = build(args.pdf, genai.Client(api_key=key), args.model)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(
