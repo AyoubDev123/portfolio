@@ -5,57 +5,53 @@ import { useLang } from "./lang";
 import { localizePortfolio } from "./localize";
 import type { Portfolio } from "./types";
 
-export type DataSource = "static" | "snapshot" | "api";
+export type DataSource = "static" | "api" | "loading" | "missing";
 
 interface PortfolioCtx {
   data: Portfolio;
   source: DataSource;
+  slug: string;
 }
 
 const Ctx = createContext<PortfolioCtx | null>(null);
 
+/** Portfolio embarqué dans le bundle : sert de repli au portfolio de démonstration. */
+export const DEMO_SLUG = "ayoub";
+
 /**
- * Ordre de priorité des sources de données :
- *   1. API live (données les plus fraîches)
- *   2. /snapshot.json (régénéré par le back-end après chaque mutation, servi par Nginx)
- *   3. Données statiques embarquées dans le bundle (dernier recours)
+ * Charge le portfolio de `slug` depuis l'API.
  *
- * L'UI s'affiche immédiatement avec les données statiques (aucun écran de chargement),
- * puis bascule silencieusement sur une source plus fraîche dès qu'elle est disponible.
+ * Le JSON statique n'est un repli valable que pour le portfolio de démonstration :
+ * afficher son contenu sous l'adresse de quelqu'un d'autre serait faux.
  */
-export function PortfolioProvider({ children, initial }: { children: ReactNode; initial?: Portfolio }) {
-  const [state, setState] = useState<PortfolioCtx>({
-    data: initial ?? (staticData as Portfolio),
-    source: "static",
-  });
+export function PortfolioProvider({ children, slug }: { children: ReactNode; slug: string }) {
+  const isDemo = slug === DEMO_SLUG;
+  const [state, setState] = useState<{ data: Portfolio; source: DataSource }>(() => ({
+    data: staticData as Portfolio,
+    source: isDemo ? "static" : "loading",
+  }));
 
   useEffect(() => {
     const ctrl = new AbortController();
+    setState((s) => ({ data: s.data, source: isDemo ? "static" : "loading" }));
 
-    fetchPortfolio(ctrl.signal)
+    fetchPortfolio(slug, ctrl.signal)
       .then((data) => setState({ data, source: "api" }))
-      .catch(async () => {
-        // L'API est injoignable : essaie le snapshot Nginx (volume Docker partagé).
-        try {
-          const res = await fetch("/snapshot.json", { signal: ctrl.signal });
-          if (res.ok) {
-            const data = (await res.json()) as Portfolio;
-            setState({ data, source: "snapshot" });
-          }
-        } catch {
-          /* repli silencieux sur les données statiques déjà affichées */
-        }
+      .catch((err) => {
+        if (ctrl.signal.aborted) return;
+        setState((s) => ({ data: s.data, source: isDemo ? "static" : "missing" }));
+        void err;
       });
 
     return () => ctrl.abort();
-  }, []);
+  }, [slug, isDemo]);
 
   // Les traductions sont résolues ici : les composants consomment toujours
   // `data` dans la langue courante et n'ont pas à connaître i18n.
   const { lang } = useLang();
   const value = useMemo(
-    () => ({ data: localizePortfolio(state.data, lang), source: state.source }),
-    [state, lang],
+    () => ({ data: localizePortfolio(state.data, lang), source: state.source, slug }),
+    [state, lang, slug],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

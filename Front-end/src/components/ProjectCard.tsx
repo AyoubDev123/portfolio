@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { usePortfolio } from "../lib/portfolio";
 import { useLang } from "../lib/lang";
 import type { Project } from "../lib/types";
 import { Chip } from "./Section";
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function ProjectCard({ project, featured }: Props) {
+  const { slug } = usePortfolio();
   const { t } = useLang();
   const cover = project.images[0];
   return (
@@ -44,7 +46,7 @@ export function ProjectCard({ project, featured }: Props) {
           {project.context ? ` · ${project.context}` : ""}
         </p>
         <h3 className="mt-2 text-lg font-semibold leading-snug tracking-tight">
-          <Link to={`/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
+          <Link to={`/${slug}/projects/${project.slug}`} className="after:absolute after:inset-0 after:content-['']">
             {project.title}
           </Link>
         </h3>

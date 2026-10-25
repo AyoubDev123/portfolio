@@ -8,10 +8,10 @@ import { useDocumentTitle } from "../lib/useDocumentTitle";
 import NotFound from "./NotFound";
 
 export default function ProjectPage() {
-  const { slug } = useParams();
-  const { data } = usePortfolio();
+  const { projectSlug } = useParams();
+  const { data, slug: owner } = usePortfolio();
   const { t } = useLang();
-  const project = data.projects.find((p) => p.slug === slug);
+  const project = data.projects.find((p) => p.slug === projectSlug);
   const [zoom, setZoom] = useState<number | null>(null);
 
   useDocumentTitle(project ? `${project.title} · Ayoub EL ABBASSI` : t.projectNotFound);
@@ -19,7 +19,7 @@ export default function ProjectPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
     setZoom(null);
-  }, [slug]);
+  }, [projectSlug]);
 
   useEffect(() => {
     if (zoom === null) return;
@@ -37,7 +37,7 @@ export default function ProjectPage() {
 
   return (
     <article className="container-page pt-10 sm:pt-14">
-      <Link to="/#projects" className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
+      <Link to={`/${owner}#projects`} className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink">
         <ArrowLeft className="h-4 w-4" aria-hidden="true" /> {t.allProjects}
       </Link>
 
@@ -149,7 +149,7 @@ export default function ProjectPage() {
 
       {next && next.slug !== project.slug && (
         <nav aria-label={t.nextProjectLabel} className="mt-16 border-t border-line pt-8">
-          <Link to={`/projects/${next.slug}`} className="group flex items-center justify-between gap-6">
+          <Link to={`/${owner}/projects/${next.slug}`} className="group flex items-center justify-between gap-6">
             <span>
               <span className="eyebrow">{t.nextProjectLabel}</span>
               <span className="mt-1 block text-xl font-semibold tracking-tight group-hover:text-brand">

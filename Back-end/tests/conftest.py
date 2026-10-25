@@ -4,8 +4,8 @@ from fastapi.testclient import TestClient
 from app.config import Settings
 from app.main import create_app
 
-ADMIN_USER = "admin"
-SLUG = "admin"  # bootstrap_admin dérive le slug du nom de compte
+ADMIN_USER = "prof-test"
+SLUG = "prof-test"  # bootstrap_admin dérive le slug du nom de compte
 ADMIN_PASS = "s3cret-pass-for-tests"
 
 PAYLOAD = {

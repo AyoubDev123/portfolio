@@ -12,7 +12,7 @@ type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | { kind
 const EMPTY = { name: "", email: "", subject: "", message: "", website: "" };
 
 export function Contact() {
-  const { data } = usePortfolio();
+  const { data, slug } = usePortfolio();
   const { profile } = data;
   const { t } = useLang();
   const [form, setForm] = useState(EMPTY);
@@ -28,7 +28,7 @@ export function Contact() {
     if (status.kind === "sending") return;
     setStatus({ kind: "sending" });
     try {
-      await sendContact(form);
+      await sendContact(slug, form);
       setForm(EMPTY);
       setStatus({ kind: "sent" });
     } catch (err) {

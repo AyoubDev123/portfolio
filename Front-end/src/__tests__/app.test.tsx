@@ -3,18 +3,17 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import App from "../App";
 import { LangProvider } from "../lib/lang";
-import { PortfolioProvider } from "../lib/portfolio";
+import { DEMO_SLUG } from "../lib/portfolio";
 import { ThemeProvider } from "../lib/theme";
 
+/** PortfolioProvider est monté par la route /<slug>, pas au-dessus de App. */
 function renderAt(path: string) {
   return render(
     <LangProvider>
       <ThemeProvider>
-        <PortfolioProvider>
-          <MemoryRouter initialEntries={[path]}>
-            <App />
-          </MemoryRouter>
-        </PortfolioProvider>
+        <MemoryRouter initialEntries={[path]}>
+          <App />
+        </MemoryRouter>
       </ThemeProvider>
     </LangProvider>,
   );
@@ -31,7 +30,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe("site public (repli statique)", () => {
   it("affiche le profil et les expériences sans API", async () => {
-    renderAt("/");
+    renderAt(`/${DEMO_SLUG}`);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Ayoub\s*EL ABBASSI/);
     expect(screen.getByText(/Safran Aircraft Engines/, { selector: "h3" })).toBeInTheDocument();
     await waitFor(() => expect(screen.getByText(/static export/)).toBeInTheDocument());
@@ -39,7 +38,7 @@ describe("site public (repli statique)", () => {
 
   it("filtre les projets par thème", async () => {
     const user = userEvent.setup();
-    renderAt("/");
+    renderAt(`/${DEMO_SLUG}`);
     const section = screen.getByRole("region", { name: /What I've built/ });
     const total = within(section).getAllByRole("article").length;
     await user.click(within(section).getByRole("button", { name: "BI & DataViz" }));
@@ -51,16 +50,16 @@ describe("site public (repli statique)", () => {
   });
 
   it("affiche la page d'un projet et une 404 sinon", () => {
-    const { unmount } = renderAt("/projects/valeur-fonciere");
+    const { unmount } = renderAt(`/${DEMO_SLUG}/projects/valeur-fonciere`);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/Land Value Prediction/i);
     unmount();
-    renderAt("/projects/inexistant");
+    renderAt(`/${DEMO_SLUG}/projects/inexistant`);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/doesn't exist/i);
   });
 
   it("propose le repli e-mail quand l'envoi du formulaire échoue", async () => {
     const user = userEvent.setup();
-    renderAt("/");
+    renderAt(`/${DEMO_SLUG}`);
     await user.type(screen.getByLabelText("Name"), "Camille Dupont");
     await user.type(screen.getByLabelText("Email"), "camille@example.com");
     await user.type(screen.getByLabelText("Subject"), "Proposition");
@@ -71,7 +70,7 @@ describe("site public (repli statique)", () => {
 
   it("bascule le thème", async () => {
     const user = userEvent.setup();
-    renderAt("/");
+    renderAt(`/${DEMO_SLUG}`);
     await user.click(screen.getByRole("button", { name: /Switch to (light|dark) theme/ }));
     expect(["dark", "light"]).toContain(document.documentElement.dataset.theme);
   });

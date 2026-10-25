@@ -48,10 +48,14 @@ function formatDetail(detail: unknown): string | null {
 }
 
 // ── Public ───────────────────────────────────────────────────────────────────
-export const fetchPortfolio = (signal?: AbortSignal) => request<Portfolio>("/api/portfolio", { signal });
+export const fetchPortfolio = (slug: string, signal?: AbortSignal) =>
+  request<Portfolio>(`/api/p/${encodeURIComponent(slug)}`, { signal });
 
-export const sendContact = (payload: ContactPayload) =>
-  request<{ ok: boolean }>("/api/contact", { method: "POST", body: JSON.stringify(payload) });
+export const sendContact = (slug: string, payload: ContactPayload) =>
+  request<{ ok: boolean }>(`/api/p/${encodeURIComponent(slug)}/contact`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 export const login = (username: string, password: string) =>
@@ -62,7 +66,31 @@ export const login = (username: string, password: string) =>
 
 export const logout = () => request<{ ok: boolean }>("/api/auth/logout", { method: "POST" });
 
-export const getMe = () => request<{ username: string }>("/api/auth/me");
+export interface Me {
+  username: string;
+  slug: string;
+  email: string;
+  published: boolean;
+  is_staff: boolean;
+}
+
+export const getMe = () => request<Me>("/api/auth/me");
+
+export interface SignupPayload {
+  username: string;
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+}
+
+export const signup = (payload: SignupPayload) =>
+  request<{ ok: boolean }>("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) });
+
+export const changeSlug = (slug: string) =>
+  request<Me>("/api/auth/slug", { method: "PUT", body: JSON.stringify({ slug }) });
+
+export const publishPortfolio = () => request<Me>("/api/auth/publish", { method: "POST" });
 
 // ── Admin ────────────────────────────────────────────────────────────────────
 export const admin = {

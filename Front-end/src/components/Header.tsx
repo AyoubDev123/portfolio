@@ -1,6 +1,6 @@
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLang } from "../lib/lang";
 import { usePortfolio } from "../lib/portfolio";
 import { useTheme } from "../lib/theme";
@@ -9,13 +9,12 @@ const SECTION_IDS = ["career", "projects", "skills", "education", "contact"];
 
 export function Header() {
   const { theme, toggle } = useTheme();
-  const { data } = usePortfolio();
+  const { data, slug } = usePortfolio();
   const { profile } = data;
   const { t, toggle: toggleLang } = useLang();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-  const { pathname } = useLocation();
-  const base = pathname === "/" ? "" : "/";
+  const base = `/${slug}`;
 
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +59,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-bg/95 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label={t.skipToContent}>
+        <Link to={base} className="flex items-center gap-2.5 font-semibold tracking-tight" aria-label={t.skipToContent}>
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand font-mono text-xs font-bold text-on-brand">
             AE
           </span>
