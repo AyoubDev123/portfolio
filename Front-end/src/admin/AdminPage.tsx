@@ -48,7 +48,7 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
       onSuccess();
     } catch (err) {
       setError(
-        err instanceof ApiError && err.status < 500 && err.status !== 404
+        err instanceof ApiError && err.isExplained && err.status !== 404
           ? err.message
           : "API injoignable : l'espace admin nécessite le back-end.",
       );

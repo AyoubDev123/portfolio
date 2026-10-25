@@ -40,7 +40,7 @@ export default function Signup() {
       navigate("/admin");
     } catch (err) {
       setError(
-        err instanceof ApiError && err.status < 500
+        err instanceof ApiError && err.isExplained
           ? err.message
           : "Service indisponible. Réessaie dans un instant.",
       );

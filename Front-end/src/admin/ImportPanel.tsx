@@ -32,7 +32,7 @@ export function ImportPanel({ me, onMeChange, onImported }: Props) {
       onImported();
     } catch (err) {
       setError(
-        err instanceof ApiError && err.status < 500
+        err instanceof ApiError && err.isExplained
           ? err.message
           : "L'analyse du CV a échoué. Réessaie dans un instant.",
       );

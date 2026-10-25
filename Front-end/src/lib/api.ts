@@ -9,6 +9,16 @@ export class ApiError extends Error {
   ) {
     super(message);
   }
+
+  /** L'API a-t-elle renvoyé une explication utile à montrer telle quelle ?
+   *
+   * Un 502 ou un 503 de notre propre API porte un message actionnable
+   * (« l'analyse de CV n'est pas configurée »). Les masquer derrière un
+   * « réessaie plus tard » donne un conseil faux : réessayer ne marchera
+   * jamais. Seul un 500 est une panne inattendue sans rien à dire. */
+  get isExplained(): boolean {
+    return this.status !== 500 && !/^Erreur \d+$/.test(this.message);
+  }
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {

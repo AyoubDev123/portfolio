@@ -33,7 +33,7 @@ export function Contact() {
       setStatus({ kind: "sent" });
     } catch (err) {
       const message =
-        err instanceof ApiError && err.status !== 404 && err.status < 500
+        err instanceof ApiError && err.isExplained && err.status !== 404
           ? err.message
           : `The sending service is temporarily unavailable. Write directly to ${profile.email}.`;
       setStatus({ kind: "error", message });
