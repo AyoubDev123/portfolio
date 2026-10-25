@@ -65,7 +65,16 @@ _TABLES = {
 }
 
 
-def _rebuild(table: str, unique_cols: list[str]) -> None:
+def _is_sqlite() -> bool:
+    return op.get_bind().dialect.name == "sqlite"
+
+
+def _rebuild_sqlite(table: str, unique_cols: list[str]) -> None:
+    """SQLite ne sait pas supprimer une contrainte : il faut refaire la table.
+
+    `recreate="always"` est indispensable — sans opération dans le bloc, le mode
+    « auto » ne reconstruit rien et l'ancienne contrainte survit.
+    """
     meta = sa.MetaData()
     target = sa.Table(
         table,
@@ -76,17 +85,24 @@ def _rebuild(table: str, unique_cols: list[str]) -> None:
         if unique_cols == ["user_id", "slug"]
         else sa.UniqueConstraint("slug", name=f"uq_{table}_slug"),
     )
-    # recreate="always" : sans opération dans le bloc, le mode "auto" ne
-    # reconstruit rien et l'ancienne contrainte reste en place.
     with op.batch_alter_table(table, copy_from=target, recreate="always"):
         pass
 
 
 def upgrade() -> None:
     for table in ("project", "experience"):
-        _rebuild(table, ["user_id", "slug"])
+        if _is_sqlite():
+            _rebuild_sqlite(table, ["user_id", "slug"])
+        else:
+            # Ailleurs la contrainte se supprime directement. Reconstruire la
+            # table casserait la clé étrangère project.experience_id.
+            # Nom généré par PostgreSQL pour un UNIQUE de colonne : <table>_<col>_key.
+            op.drop_constraint(f"{table}_slug_key", table, type_="unique")
 
 
 def downgrade() -> None:
     for table in ("experience", "project"):
-        _rebuild(table, ["slug"])
+        if _is_sqlite():
+            _rebuild_sqlite(table, ["slug"])
+        else:
+            op.create_unique_constraint(f"{table}_slug_key", table, ["slug"])

@@ -1,0 +1,29 @@
+# Contexte de build : tout le dépôt est envoyé au démon Docker.
+# Sans ces exclusions, node_modules et .venv de la machine de dev écrasent les
+# dépendances installées dans l'image — et le contexte pèse des centaines de Mo.
+
+**/node_modules
+**/.venv
+**/__pycache__
+**/*.pyc
+
+# Artefacts de build, reconstruits dans l'image
+Front-end/dist
+Back-end/static
+
+# Données et secrets locaux
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.db.bak-*
+**/.env
+
+# Outillage qui n'a rien à faire dans l'image
+.git
+.github
+.claude
+.vscode
+**/.pytest_cache
+**/.ruff_cache
+Back-end/tests
+*.md
