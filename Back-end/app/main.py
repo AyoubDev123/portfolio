@@ -7,8 +7,10 @@ from pathlib import Path
 
 from alembic import command
 from alembic.config import Config
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy import Engine, inspect, select
 
 from . import models
@@ -115,7 +117,43 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(contact.router)
     app.include_router(auth.router)
     app.include_router(admin.router)
+    _serve_spa(app)
     return app
+
+
+# Le build du front, copié à côté de l'app par le Dockerfile.
+SPA_DIR = Path(__file__).resolve().parents[1] / "static"
+
+
+def _serve_spa(app: FastAPI) -> None:
+    """Sert le site depuis la même origine que l'API.
+
+    Deux domaines séparés (front sur un hébergeur, API sur un autre) rendraient
+    le cookie d'authentification cross-site : en SameSite=strict le navigateur
+    ne l'enverrait jamais et la connexion serait impossible. Une seule origine
+    évite aussi toute configuration CORS.
+    """
+    if not SPA_DIR.is_dir():
+        return
+
+    app.mount("/assets", StaticFiles(directory=SPA_DIR / "assets"), name="assets")
+    index = SPA_DIR / "index.html"
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def spa(full_path: str) -> FileResponse:
+        # Une route d'API inconnue doit rester une 404 : sans ça le client
+        # recevrait la page d'accueil en 200 et tenterait de la lire en JSON.
+        if full_path == "api" or full_path.startswith("api/"):
+            raise HTTPException(404, "Endpoint inconnu")
+
+        # Un fichier réel (favicon, CV, images) est servi tel quel ; tout le
+        # reste retombe sur index.html pour que /<slug> marche au rafraîchissement.
+        candidate = (SPA_DIR / full_path).resolve()
+        if candidate.is_file() and candidate.is_relative_to(SPA_DIR):
+            return FileResponse(candidate)
+        if not index.is_file():
+            raise HTTPException(404, "Site non construit")
+        return FileResponse(index)
 
 
 app = create_app()

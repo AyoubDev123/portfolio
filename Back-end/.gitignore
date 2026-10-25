@@ -12,3 +12,6 @@ app/data/content.generated.json
 
 # Sauvegardes locales de la base
 *.db.bak-*
+
+# Build du front copié par le Dockerfile
+static/

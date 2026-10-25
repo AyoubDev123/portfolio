@@ -54,7 +54,7 @@ def upgrade() -> None:
                 "created_at",
                 sa.DateTime(timezone=True),
                 nullable=False,
-                server_default=sa.text("(strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))"),
+                server_default=sa.text("CURRENT_TIMESTAMP"),
             )
         )
 

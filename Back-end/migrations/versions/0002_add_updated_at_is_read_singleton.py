@@ -15,7 +15,8 @@ down_revision: str | None = "0001"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-_TIMESTAMP_DEFAULT = sa.text("(strftime('%Y-%m-%dT%H:%M:%SZ', 'now'))")
+# CURRENT_TIMESTAMP est du SQL standard : strftime ne marcherait que sur SQLite.
+_TIMESTAMP_DEFAULT = sa.text("CURRENT_TIMESTAMP")
 _CONTENT_TABLES = ("experience", "project", "skill_group", "education", "certification", "interest")
 
 
@@ -27,7 +28,7 @@ def upgrade() -> None:
                 sa.Column("updated_at", sa.DateTime(timezone=True), nullable=True, server_default=_TIMESTAMP_DEFAULT)
             )
         # Backfille les lignes existantes.
-        op.execute(f"UPDATE {table} SET updated_at = strftime('%Y-%m-%dT%H:%M:%SZ', 'now') WHERE updated_at IS NULL")
+        op.execute(f"UPDATE {table} SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL")
 
     # --- Colonne singleton + contraintes sur profile ---------------------------
     with op.batch_alter_table("profile") as batch_op:
