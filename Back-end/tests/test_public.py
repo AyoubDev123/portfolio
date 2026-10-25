@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from conftest import SLUG
 
 from app.export_static import DEFAULT_OUT, render_static_json
 from app.seed import load_content
@@ -14,7 +15,7 @@ def test_health(client):
 
 
 def test_portfolio_shape(client):
-    r = client.get("/api/portfolio")
+    r = client.get("/api/p/" + SLUG)
     assert r.status_code == 200
     assert r.headers["cache-control"] == "public, max-age=60"
     data = r.json()
@@ -32,7 +33,7 @@ def test_portfolio_shape(client):
 
 
 def test_current_experience_flag(client):
-    exps = {e["slug"]: e for e in client.get("/api/portfolio").json()["experiences"]}
+    exps = {e["slug"]: e for e in client.get("/api/p/" + SLUG).json()["experiences"]}
     assert exps["safran"]["current"] is True
     assert exps["renault"]["current"] is False
 
@@ -45,7 +46,7 @@ def test_projects_linked_to_experiences(client, auth_client):
     )
     assert created.status_code == 201
 
-    data = client.get("/api/portfolio").json()
+    data = client.get("/api/p/" + SLUG).json()
     by_slug = {p["slug"]: p for p in data["projects"]}
     assert by_slug["lien-test"]["experience_slug"] == "inventiv-it"
     assert by_slug["valeur-fonciere"]["experience_slug"] is None
@@ -54,10 +55,10 @@ def test_projects_linked_to_experiences(client, auth_client):
 
 
 def test_get_project_and_404(client):
-    ok = client.get("/api/projects/valeur-fonciere")
+    ok = client.get("/api/p/" + SLUG + "/projects/valeur-fonciere")
     assert ok.status_code == 200
     assert ok.json()["title"].startswith("Land Value")
-    assert client.get("/api/projects/inconnu").status_code == 404
+    assert client.get("/api/p/" + SLUG + "/projects/inconnu").status_code == 404
 
 
 def test_security_headers(client):

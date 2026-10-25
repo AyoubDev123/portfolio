@@ -1,4 +1,4 @@
-from conftest import ADMIN_PASS, ADMIN_USER
+from conftest import ADMIN_PASS, ADMIN_USER, SLUG
 from fastapi.testclient import TestClient
 
 NEW_PROJECT = {"slug": "nouveau-projet", "title": "Nouveau projet", "stack": ["Python"], "tags": ["Test"]}
@@ -14,7 +14,8 @@ def test_login_ok_sets_cookie_and_me(client: TestClient):
     # /me fonctionne sans header supplémentaire (cookie envoyé par le client automatiquement).
     me = client.get("/api/auth/me")
     assert me.status_code == 200
-    assert me.json() == {"username": ADMIN_USER}
+    assert me.json()["username"] == ADMIN_USER
+    assert me.json()["slug"] == SLUG
 
 
 def test_login_wrong_password_and_unknown_user(client: TestClient):
@@ -64,7 +65,7 @@ def test_project_crud_cycle(auth_client: TestClient):
     assert created.status_code == 201
     pid = created.json()["id"]
 
-    slugs = [p["slug"] for p in auth_client.get("/api/portfolio").json()["projects"]]
+    slugs = [p["slug"] for p in auth_client.get("/api/p/" + SLUG).json()["projects"]]
     assert "nouveau-projet" in slugs
 
     updated = auth_client.put(f"/api/admin/projects/{pid}", json={**NEW_PROJECT, "title": "Titre modifié"})
@@ -111,7 +112,7 @@ def test_deleting_experience_keeps_projects(auth_client: TestClient):
     assert created.status_code == 201
 
     assert auth_client.delete(f"/api/admin/experiences/{inventiv['id']}").status_code == 204
-    proj = auth_client.get("/api/projects/lien-suppression").json()
+    proj = auth_client.get("/api/p/" + SLUG + "/projects/lien-suppression").json()
     assert proj["experience_slug"] is None  # ON DELETE SET NULL
 
 
@@ -121,11 +122,11 @@ def test_profile_update(auth_client: TestClient):
     profile["status_label"] = "Disponible"
     r = auth_client.put("/api/admin/profile", json=profile)
     assert r.status_code == 200
-    assert auth_client.get("/api/portfolio").json()["profile"]["status_label"] == "Disponible"
+    assert auth_client.get("/api/p/" + SLUG).json()["profile"]["status_label"] == "Disponible"
 
 
 def test_profile_singleton_guard(auth_client: TestClient):
-    """Une seconde ligne profile ne peut pas être créée (contrainte _singleton)."""
+    """Un compte n'a qu'un seul profil (contrainte uq_profile_user)."""
     profile = auth_client.get("/api/admin/profile").json()
     profile.pop("id")
     # PUT est idempotent (upsert) — on vérifie juste que ça ne crée pas deux lignes.
@@ -133,7 +134,7 @@ def test_profile_singleton_guard(auth_client: TestClient):
     r2 = auth_client.put("/api/admin/profile", json=profile)
     assert r1.status_code == 200 and r2.status_code == 200
     # L'API portfolio retourne exactement un profil.
-    data = auth_client.get("/api/portfolio").json()
+    data = auth_client.get("/api/p/" + SLUG).json()
     assert isinstance(data["profile"], dict)
 
 
@@ -158,7 +159,7 @@ def test_message_mark_read(auth_client: TestClient):
     from conftest import PAYLOAD  # type: ignore[attr-defined]
 
     # Envoie un message via le formulaire public.
-    auth_client.post("/api/contact", json=PAYLOAD)
+    auth_client.post("/api/p/" + SLUG + "/contact", json=PAYLOAD)
     msgs = auth_client.get("/api/admin/messages").json()
     assert len(msgs) == 1
     msg_id = msgs[0]["id"]

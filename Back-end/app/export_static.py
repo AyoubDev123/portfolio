@@ -25,20 +25,20 @@ from .services import build_portfolio
 DEFAULT_OUT = Path(__file__).resolve().parents[2] / "Front-end" / "src" / "data" / "portfolio.static.json"
 
 
-def _to_json(db: Session) -> str | None:
-    portfolio = build_portfolio(db)
+def _to_json(db: Session, user_id: int) -> str | None:
+    portfolio = build_portfolio(db, user_id)
     if portfolio is None:
         return None
     return json.dumps(portfolio.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n"
 
 
-def export_from_session(db: Session, out_path: Path) -> None:
+def export_from_session(db: Session, out_path: Path, user_id: int) -> None:
     """Régénère le snapshot depuis une session DB live.
 
     Appelé en tâche de fond après chaque mutation admin pour que le fallback
     statique reflète toujours le contenu le plus récent.
     """
-    content = _to_json(db)
+    content = _to_json(db, user_id)
     if content is None:
         return
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -50,8 +50,11 @@ def render_static_json() -> str:
     engine = make_engine("sqlite://")
     models.Base.metadata.create_all(engine)
     with make_session_factory(engine)() as db:
-        seed(db)
-        content = _to_json(db)
+        user = models.User(username="demo", email="demo@local", slug="demo", password_hash="x")
+        db.add(user)
+        db.flush()
+        seed(db, user_id=user.id)
+        content = _to_json(db, user.id)
     assert content is not None
     return content
 

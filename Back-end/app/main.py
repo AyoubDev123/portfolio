@@ -48,9 +48,17 @@ def bootstrap_admin(db, settings: Settings) -> None:
     """Crée le compte admin au premier démarrage si ADMIN_USERNAME/ADMIN_PASSWORD sont définis."""
     if not (settings.admin_username and settings.admin_password):
         return
-    exists = db.scalars(select(models.AdminUser).where(models.AdminUser.username == settings.admin_username)).first()
+    exists = db.scalars(select(models.User).where(models.User.username == settings.admin_username)).first()
     if exists is None:
-        db.add(models.AdminUser(username=settings.admin_username, password_hash=hash_password(settings.admin_password)))
+        db.add(
+            models.User(
+                username=settings.admin_username,
+                email=f"{settings.admin_username}@local",
+                slug=settings.admin_username,
+                password_hash=hash_password(settings.admin_password),
+                is_staff=True,
+            )
+        )
         db.commit()
         log.info("Compte admin « %s » créé.", settings.admin_username)
 
@@ -66,9 +74,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def lifespan(_app: FastAPI):
         init_schema(engine)
         with session_factory() as db:
+            # Le compte d'abord : le contenu du seed doit avoir un propriétaire.
+            bootstrap_admin(db, settings)
             if settings.seed_on_startup:
                 seed(db)
-            bootstrap_admin(db, settings)
         yield
         engine.dispose()
 

@@ -23,24 +23,26 @@ def _project_out(p: models.Project) -> schemas.ProjectRead:
     return out
 
 
-def build_portfolio(db: Session) -> schemas.PortfolioRead | None:
-    profile = db.scalars(select(models.Profile).limit(1)).first()
+def build_portfolio(db: Session, user_id: int) -> schemas.PortfolioRead | None:
+    profile = db.scalars(select(models.Profile).where(models.Profile.user_id == user_id)).first()
     if profile is None:
         return None
 
     experiences = db.scalars(
         select(models.Experience)
+        .where(models.Experience.user_id == user_id)
         .options(selectinload(models.Experience.projects))
         .order_by(models.Experience.position, models.Experience.start_date.desc())
     ).all()
     projects = db.scalars(
         select(models.Project)
+        .where(models.Project.user_id == user_id)
         .options(selectinload(models.Project.experience))
         .order_by(models.Project.position, models.Project.id)
     ).all()
 
     def ordered(model):
-        return db.scalars(select(model).order_by(model.position, model.id)).all()
+        return db.scalars(select(model).where(model.user_id == user_id).order_by(model.position, model.id)).all()
 
     return schemas.PortfolioRead(
         profile=schemas.ProfileRead.model_validate(profile),

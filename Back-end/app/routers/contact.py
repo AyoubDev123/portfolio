@@ -12,8 +12,9 @@ from ..security import RateLimiter
 router = APIRouter(prefix="/api", tags=["contact"])
 
 
-@router.post("/contact", response_model=schemas.ContactOut, status_code=status.HTTP_201_CREATED)
+@router.post("/p/{slug}/contact", response_model=schemas.ContactOut, status_code=status.HTTP_201_CREATED)
 def post_contact(
+    slug: str,
     body: schemas.ContactIn,
     request: Request,
     background: BackgroundTasks,
@@ -29,7 +30,21 @@ def post_contact(
     if not limiter.allow(f"contact:{client_ip(request)}", settings.contact_rate_limit, settings.contact_rate_window_s):
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Trop de messages envoyés, réessayez plus tard")
 
-    db.add(models.ContactMessage(name=body.name, email=body.email, subject=body.subject, message=body.message))
+    from sqlalchemy import select
+
+    owner = db.scalars(select(models.User).where(models.User.slug == slug)).first()
+    if owner is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Portfolio introuvable")
+
+    db.add(
+        models.ContactMessage(
+            user_id=owner.id,
+            name=body.name,
+            email=body.email,
+            subject=body.subject,
+            message=body.message,
+        )
+    )
     db.commit()
 
     background.add_task(

@@ -223,3 +223,21 @@ class LoginOut(BaseModel):
 
 class MeOut(BaseModel):
     username: str
+    slug: str
+    email: str = ""
+    published: bool = False
+    is_staff: bool = False
+
+
+class SignupIn(BaseModel):
+    """Création de compte. Le slug devient l'adresse publique du portfolio."""
+
+    username: str = Field(min_length=3, max_length=80, pattern=SLUG)
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=200)
+    first_name: str = Field(min_length=1, max_length=80)
+    last_name: str = Field(min_length=1, max_length=80)
+
+
+class SlugIn(BaseModel):
+    slug: str = Field(min_length=3, max_length=80, pattern=SLUG)

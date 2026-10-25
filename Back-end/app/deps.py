@@ -38,7 +38,8 @@ def require_admin(
     request: Request,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
-) -> models.AdminUser:
+) -> models.User:
+    """Le compte connecté. Tout ce qu'il manipule doit être filtré sur son id."""
     unauthorized = HTTPException(status.HTTP_401_UNAUTHORIZED, "Authentification requise")
 
     token = request.cookies.get(_COOKIE)
@@ -56,7 +57,7 @@ def require_admin(
     if blocked:
         raise unauthorized
 
-    user = db.scalars(select(models.AdminUser).where(models.AdminUser.username == username)).first()
+    user = db.scalars(select(models.User).where(models.User.username == username)).first()
     if user is None:
         raise unauthorized
     return user

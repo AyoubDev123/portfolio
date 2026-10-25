@@ -37,6 +37,52 @@ def _purge_expired_blocklist(db: Session) -> None:
     db.commit()
 
 
+@router.post("/signup", response_model=schemas.LoginOut, status_code=status.HTTP_201_CREATED)
+def signup(
+    body: schemas.SignupIn,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+    limiter: RateLimiter = Depends(get_limiter),
+):
+    """Crée un compte, son profil vide, et connecte directement."""
+    if not limiter.allow(f"signup:{client_ip(request)}", settings.login_rate_limit, settings.login_rate_window_s):
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Trop de tentatives, réessayez plus tard")
+
+    taken = db.scalars(
+        select(models.User).where((models.User.username == body.username) | (models.User.email == body.email))
+    ).first()
+    if taken is not None:
+        # Message identique pour les deux cas : dire lequel révélerait qui a un compte.
+        raise HTTPException(status.HTTP_409_CONFLICT, "Cet identifiant ou cet e-mail est déjà utilisé")
+
+    user = models.User(
+        username=body.username,
+        email=body.email,
+        slug=body.username,
+        password_hash=hash_password(body.password),
+    )
+    db.add(user)
+    db.flush()
+    db.add(
+        models.Profile(
+            user_id=user.id,
+            first_name=body.first_name,
+            last_name=body.last_name,
+            headline="",
+            tagline="",
+            email=body.email,
+        )
+    )
+    db.commit()
+    db.refresh(user)
+
+    token, _jti, expires_in = create_access_token(user.username, settings.secret_key, settings.access_token_minutes)
+    _set_auth_cookie(response, token, expires_in, secure=settings.is_production)
+    return schemas.LoginOut()
+
+
 @router.post("/login", response_model=schemas.LoginOut)
 def login(
     body: schemas.LoginIn,
@@ -49,7 +95,7 @@ def login(
     if not limiter.allow(f"login:{client_ip(request)}", settings.login_rate_limit, settings.login_rate_window_s):
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Trop de tentatives, réessayez plus tard")
 
-    user = db.scalars(select(models.AdminUser).where(models.AdminUser.username == body.username)).first()
+    user = db.scalars(select(models.User).where(models.User.username == body.username)).first()
     ok = verify_password(body.password, user.password_hash if user else _DUMMY_HASH)
     if not (user and ok):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Identifiants invalides")
@@ -86,5 +132,47 @@ def logout(
 
 
 @router.get("/me", response_model=schemas.MeOut)
-def me(user: models.AdminUser = Depends(require_admin)):
-    return schemas.MeOut(username=user.username)
+def me(user: models.User = Depends(require_admin)):
+    return schemas.MeOut(
+        username=user.username,
+        slug=user.slug,
+        email=user.email,
+        published=user.published,
+        is_staff=user.is_staff,
+    )
+
+
+@router.put("/slug", response_model=schemas.MeOut)
+def change_slug(
+    body: schemas.SlugIn,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_admin),
+):
+    """Change l'adresse publique du portfolio."""
+    clash = db.scalars(select(models.User).where(models.User.slug == body.slug, models.User.id != user.id)).first()
+    if clash is not None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Cette adresse est déjà prise")
+    user.slug = body.slug
+    db.commit()
+    db.refresh(user)
+    return schemas.MeOut(
+        username=user.username,
+        slug=user.slug,
+        email=user.email,
+        published=user.published,
+        is_staff=user.is_staff,
+    )
+
+
+@router.post("/publish", response_model=schemas.MeOut)
+def publish(db: Session = Depends(get_db), user: models.User = Depends(require_admin)):
+    user.published = True
+    db.commit()
+    db.refresh(user)
+    return schemas.MeOut(
+        username=user.username,
+        slug=user.slug,
+        email=user.email,
+        published=user.published,
+        is_staff=user.is_staff,
+    )

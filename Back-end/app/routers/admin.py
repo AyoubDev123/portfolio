@@ -36,7 +36,7 @@ def _commit(db: Session) -> None:
         raise HTTPException(status.HTTP_409_CONFLICT, "Conflit : valeur déjà utilisée ou référence invalide") from exc
 
 
-def _schedule_snapshot(bg: BackgroundTasks, request: Request, settings: Settings) -> None:
+def _schedule_snapshot(bg: BackgroundTasks, request: Request, settings: Settings, user_id: int) -> None:
     """Planifie la régénération du snapshot statique en arrière-plan si configuré."""
     if not settings.static_snapshot_path:
         return
@@ -45,7 +45,7 @@ def _schedule_snapshot(bg: BackgroundTasks, request: Request, settings: Settings
 
     def _export() -> None:
         with session_factory() as db:
-            export_from_session(db, out)
+            export_from_session(db, out, user_id)
 
     bg.add_task(_export)
 
@@ -60,16 +60,19 @@ def add_crud(
 ) -> None:
     out = to_out or schema_out.model_validate
 
-    def get_or_404(db: Session, item_id: int):
+    def get_or_404(db: Session, item_id: int, user: models.User):
         obj = db.get(model, item_id)
-        if obj is None:
+        # Un objet qui appartient à quelqu'un d'autre doit être indistinguable
+        # d'un objet inexistant : répondre 403 révélerait qu'il existe.
+        if obj is None or obj.user_id != user.id:
             raise HTTPException(404, "Introuvable")
         return obj
 
     @router.get(f"/{path}", response_model=list[schema_out], name=f"list_{path}")
-    def list_items(db: Session = Depends(get_db)):
+    def list_items(db: Session = Depends(get_db), user: models.User = Depends(require_admin)):
         order = order_by or (model.id,)
-        return [out(o) for o in db.scalars(select(model).order_by(*order)).all()]
+        rows = db.scalars(select(model).where(model.user_id == user.id).order_by(*order)).all()
+        return [out(o) for o in rows]
 
     @router.post(f"/{path}", response_model=schema_out, status_code=201, name=f"create_{path}")
     def create_item(
@@ -78,17 +81,22 @@ def add_crud(
         bg: BackgroundTasks,
         db: Session = Depends(get_db),
         settings: Settings = Depends(get_settings),
+        user: models.User = Depends(require_admin),
     ):  # type: ignore[valid-type]
-        obj = model(**body.model_dump())
+        obj = model(**body.model_dump(), user_id=user.id)
         db.add(obj)
         _commit(db)
         db.refresh(obj)
-        _schedule_snapshot(bg, request, settings)
+        _schedule_snapshot(bg, request, settings, user.id)
         return out(obj)
 
     @router.get(f"/{path}/{{item_id}}", response_model=schema_out, name=f"get_{path}")
-    def read_item(item_id: int, db: Session = Depends(get_db)):
-        return out(get_or_404(db, item_id))
+    def read_item(
+        item_id: int,
+        db: Session = Depends(get_db),
+        user: models.User = Depends(require_admin),
+    ):
+        return out(get_or_404(db, item_id, user))
 
     @router.put(f"/{path}/{{item_id}}", response_model=schema_out, name=f"update_{path}")
     def update_item(
@@ -98,12 +106,13 @@ def add_crud(
         bg: BackgroundTasks,
         db: Session = Depends(get_db),
         settings: Settings = Depends(get_settings),
+        user: models.User = Depends(require_admin),
     ):  # type: ignore[valid-type]
-        obj = get_or_404(db, item_id)
+        obj = get_or_404(db, item_id, user)
         _apply(obj, body.model_dump())
         _commit(db)
         db.refresh(obj)
-        _schedule_snapshot(bg, request, settings)
+        _schedule_snapshot(bg, request, settings, user.id)
         return out(obj)
 
     @router.delete(f"/{path}/{{item_id}}", status_code=204, name=f"delete_{path}")
@@ -113,10 +122,11 @@ def add_crud(
         bg: BackgroundTasks,
         db: Session = Depends(get_db),
         settings: Settings = Depends(get_settings),
+        user: models.User = Depends(require_admin),
     ):
-        db.delete(get_or_404(db, item_id))
+        db.delete(get_or_404(db, item_id, user))
         _commit(db)
-        _schedule_snapshot(bg, request, settings)
+        _schedule_snapshot(bg, request, settings, user.id)
         return Response(status_code=204)
 
 
@@ -143,8 +153,8 @@ add_crud("interests", models.Interest, schemas.InterestBase, schemas.InterestRea
 
 
 @router.get("/profile", response_model=schemas.ProfileRead)
-def get_profile(db: Session = Depends(get_db)):
-    profile = db.scalars(select(models.Profile).limit(1)).first()
+def get_profile(db: Session = Depends(get_db), user: models.User = Depends(require_admin)):
+    profile = db.scalars(select(models.Profile).where(models.Profile.user_id == user.id)).first()
     if profile is None:
         raise HTTPException(404, "Profil non initialisé")
     return profile
@@ -157,29 +167,38 @@ def put_profile(
     bg: BackgroundTasks,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
+    user: models.User = Depends(require_admin),
 ):
-    profile = db.scalars(select(models.Profile).limit(1)).first()
+    profile = db.scalars(select(models.Profile).where(models.Profile.user_id == user.id)).first()
     data = body.model_dump()
     if profile is None:
-        profile = models.Profile(**data)
+        profile = models.Profile(**data, user_id=user.id)
         db.add(profile)
     else:
         _apply(profile, data)
     _commit(db)
     db.refresh(profile)
-    _schedule_snapshot(bg, request, settings)
+    _schedule_snapshot(bg, request, settings, user.id)
     return profile
 
 
 @router.get("/messages", response_model=list[schemas.ContactMessageRead])
-def list_messages(db: Session = Depends(get_db)):
-    return db.scalars(select(models.ContactMessage).order_by(models.ContactMessage.id.desc())).all()
+def list_messages(db: Session = Depends(get_db), user: models.User = Depends(require_admin)):
+    return db.scalars(
+        select(models.ContactMessage)
+        .where(models.ContactMessage.user_id == user.id)
+        .order_by(models.ContactMessage.id.desc())
+    ).all()
 
 
 @router.patch("/messages/{message_id}/read", response_model=schemas.ContactMessageRead)
-def mark_message_read(message_id: int, db: Session = Depends(get_db)):
+def mark_message_read(
+    message_id: int,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_admin),
+):
     msg = db.get(models.ContactMessage, message_id)
-    if msg is None:
+    if msg is None or msg.user_id != user.id:
         raise HTTPException(404, "Introuvable")
     msg.is_read = True
     db.commit()
@@ -188,9 +207,13 @@ def mark_message_read(message_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/messages/{message_id}", status_code=204)
-def delete_message(message_id: int, db: Session = Depends(get_db)):
+def delete_message(
+    message_id: int,
+    db: Session = Depends(get_db),
+    user: models.User = Depends(require_admin),
+):
     msg = db.get(models.ContactMessage, message_id)
-    if msg is None:
+    if msg is None or msg.user_id != user.id:
         raise HTTPException(404, "Introuvable")
     db.delete(msg)
     db.commit()

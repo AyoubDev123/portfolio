@@ -36,9 +36,16 @@ def is_seeded(db: Session) -> bool:
     return db.scalars(select(models.Profile.id).limit(1)).first() is not None
 
 
-def seed(db: Session, content: dict | None = None, *, reset: bool = False) -> bool:
-    """Insère le contenu. Retourne False si la base contenait déjà des données (sans reset)."""
+def seed(db: Session, content: dict | None = None, *, reset: bool = False, user_id: int | None = None) -> bool:
+    """Insère le contenu. Retourne False si la base contenait déjà des données (sans reset).
+
+    Le contenu est rattaché à `user_id`, ou au premier compte existant.
+    """
     content = content or load_content()
+    if user_id is None:
+        user_id = db.scalars(select(models.User.id).order_by(models.User.id).limit(1)).first()
+    if user_id is None:
+        return False
     if reset:
         for table in CONTENT_TABLES:
             db.execute(delete(table))
@@ -46,11 +53,14 @@ def seed(db: Session, content: dict | None = None, *, reset: bool = False) -> bo
     elif is_seeded(db):
         return False
 
-    db.add(models.Profile(**content["profile"]))
+    db.add(models.Profile(**content["profile"], user_id=user_id))
 
     experience_ids: dict[str, int] = {}
     for item in content["experiences"]:
-        exp = models.Experience(**{**item, "start_date": _d(item["start_date"]), "end_date": _d(item["end_date"])})
+        exp = models.Experience(
+            **{**item, "start_date": _d(item["start_date"]), "end_date": _d(item["end_date"])},
+            user_id=user_id,
+        )
         db.add(exp)
         db.flush()
         experience_ids[exp.slug] = exp.id
@@ -58,7 +68,13 @@ def seed(db: Session, content: dict | None = None, *, reset: bool = False) -> bo
     for item in content["projects"]:
         data = dict(item)
         exp_slug = data.pop("experience", None)
-        db.add(models.Project(**data, experience_id=experience_ids[exp_slug] if exp_slug else None))
+        db.add(
+            models.Project(
+                **data,
+                user_id=user_id,
+                experience_id=experience_ids[exp_slug] if exp_slug else None,
+            )
+        )
 
     for key, model in (
         ("skill_groups", models.SkillGroup),
@@ -66,7 +82,7 @@ def seed(db: Session, content: dict | None = None, *, reset: bool = False) -> bo
         ("certifications", models.Certification),
         ("interests", models.Interest),
     ):
-        db.add_all(model(**item) for item in content[key])
+        db.add_all(model(**item, user_id=user_id) for item in content[key])
 
     db.commit()
     return True

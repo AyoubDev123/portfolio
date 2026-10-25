@@ -7,7 +7,11 @@ from app.seed import is_seeded, load_content, seed
 def _db():
     engine = make_engine("sqlite://")
     models.Base.metadata.create_all(engine)
-    return make_session_factory(engine)()
+    db = make_session_factory(engine)()
+    # Le contenu appartient à un compte : il en faut un avant de semer.
+    db.add(models.User(username="demo", email="demo@local", slug="demo", password_hash="x"))
+    db.commit()
+    return db
 
 
 def test_seed_is_idempotent():

@@ -12,7 +12,6 @@ from datetime import date, datetime
 from sqlalchemy import (
     JSON,
     Boolean,
-    CheckConstraint,
     Date,
     DateTime,
     ForeignKey,
@@ -31,14 +30,11 @@ class Base(DeclarativeBase):
 
 class Profile(Base):
     __tablename__ = "profile"
-    # Contrainte singleton : une seule ligne autorisée (_singleton doit valoir 1).
-    __table_args__ = (
-        UniqueConstraint("_singleton"),
-        CheckConstraint("_singleton = 1", name="ck_profile_singleton"),
-    )
+    # Un profil par compte (remplace l'ancienne contrainte singleton mono-utilisateur).
+    __table_args__ = (UniqueConstraint("user_id", name="uq_profile_user"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    _singleton: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     first_name: Mapped[str] = mapped_column(String(80))
     last_name: Mapped[str] = mapped_column(String(80))
     headline: Mapped[str] = mapped_column(String(200))
@@ -63,9 +59,11 @@ class Profile(Base):
 
 class Experience(Base):
     __tablename__ = "experience"
+    __table_args__ = (UniqueConstraint("user_id", "slug", name="uq_experience_user_slug"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
+    slug: Mapped[str] = mapped_column(String(80), index=True)
     company: Mapped[str] = mapped_column(String(120))
     role: Mapped[str] = mapped_column(String(160))
     contract: Mapped[str] = mapped_column(String(60))  # Alternance, Stage…
@@ -88,9 +86,11 @@ class Experience(Base):
 
 class Project(Base):
     __tablename__ = "project"
+    __table_args__ = (UniqueConstraint("user_id", "slug", name="uq_project_user_slug"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
+    slug: Mapped[str] = mapped_column(String(80), index=True)
     title: Mapped[str] = mapped_column(String(160))
     subtitle: Mapped[str] = mapped_column(String(240), default="")
     period: Mapped[str] = mapped_column(String(80), default="")
@@ -119,6 +119,7 @@ class SkillGroup(Base):
     __tablename__ = "skill_group"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(120))
     items: Mapped[list] = mapped_column(JSON, default=list)
     position: Mapped[int] = mapped_column(Integer, default=0)
@@ -134,6 +135,7 @@ class Education(Base):
     __tablename__ = "education"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     school: Mapped[str] = mapped_column(String(160))
     degree: Mapped[str] = mapped_column(String(200))
     description: Mapped[str] = mapped_column(Text, default="")
@@ -152,6 +154,7 @@ class Certification(Base):
     __tablename__ = "certification"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(200))
     issuer: Mapped[str] = mapped_column(String(160))
     date_label: Mapped[str] = mapped_column(String(60))
@@ -169,6 +172,7 @@ class Interest(Base):
     __tablename__ = "interest"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     title: Mapped[str] = mapped_column(String(120))
     description: Mapped[str] = mapped_column(String(300), default="")
     icon: Mapped[str] = mapped_column(String(40), default="sparkles")
@@ -185,6 +189,7 @@ class ContactMessage(Base):
     __tablename__ = "contact_message"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(120))
     email: Mapped[str] = mapped_column(String(200))
     subject: Mapped[str] = mapped_column(String(200))
@@ -193,12 +198,19 @@ class ContactMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
-class AdminUser(Base):
-    __tablename__ = "admin_user"
+class User(Base):
+    """Un compte = un portfolio, publié sur /<slug>."""
+
+    __tablename__ = "user_account"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(String(80), unique=True)
+    username: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(200), unique=True, index=True, default="")
     password_hash: Mapped[str] = mapped_column(String(200))
+    slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    is_staff: Mapped[bool] = mapped_column(Boolean, default=False)  # accès à l'espace établissement
+    published: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class TokenBlocklist(Base):

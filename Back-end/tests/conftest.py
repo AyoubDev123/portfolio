@@ -5,6 +5,7 @@ from app.config import Settings
 from app.main import create_app
 
 ADMIN_USER = "admin"
+SLUG = "admin"  # bootstrap_admin dérive le slug du nom de compte
 ADMIN_PASS = "s3cret-pass-for-tests"
 
 PAYLOAD = {
@@ -27,6 +28,11 @@ def settings() -> Settings:
         login_rate_limit=4,
         _env_file=None,
     )
+
+
+@pytest.fixture
+def slug() -> str:
+    return SLUG
 
 
 @pytest.fixture
