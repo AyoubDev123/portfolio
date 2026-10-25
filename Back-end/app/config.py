@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     # Laisser vide pour désactiver (ex. hébergement statique sans volume).
     static_snapshot_path: str = ""
 
-    # Import de CV (python -m app.import_cv). Non utilisé par l'API web.
+    # Analyse des CV (endpoint /api/admin/import-cv et CLI python -m app.cv_import).
     gemini_api_key: str = ""
 
     # Formulaire de contact (SMTP optionnel : sans SMTP, le message est seulement stocké)
@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     contact_rate_window_s: int = 3600
     login_rate_limit: int = 10  # tentatives
     login_rate_window_s: int = 600
+    import_rate_limit: int = 5  # imports de CV (chacun coûte un appel au modèle)
+    import_rate_window_s: int = 3600
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -9,14 +9,24 @@ from __future__ import annotations
 
 import time
 from datetime import date
+from pathlib import Path
 
 from google import genai
 from google.genai import errors, types
+from pydantic import BaseModel, Field, create_model
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from . import models
-from .import_cv import PROMPT, PortfolioImport
+from .schemas import (
+    SLUG,
+    CertificationBase,
+    EducationBase,
+    ExperienceBase,
+    InterestBase,
+    ProfileBase,
+    SkillGroupBase,
+)
 
 DEFAULT_MODEL = "gemini-3.5-flash"
 MAX_PDF_BYTES = 10 * 1024 * 1024
@@ -32,7 +42,69 @@ _REPLACED = (
 )
 
 
-class ImportError_(Exception):
+def _importable(model: type[BaseModel], name: str) -> type[BaseModel]:
+    """Reprend un schéma de l'API sans son champ i18n.
+
+    Un CV ne contient pas de traductions, et surtout `dict[str, dict]` produit
+    `additionalProperties`, que l'API Gemini refuse dans un response_schema.
+    """
+    fields = {k: (f.annotation, f) for k, f in model.model_fields.items() if k != "i18n"}
+    return create_model(name, **fields)
+
+
+class ProjectImport(BaseModel):
+    """ProjectBase, mais le projet pointe vers une expérience par slug (comme content.json).
+
+    `images` et `links` sont absents : un CV ne contient ni captures d'écran ni URLs de démo.
+    """
+
+    slug: str = Field(pattern=SLUG, max_length=80)
+    title: str = Field(min_length=1, max_length=160)
+    subtitle: str = ""
+    period: str = ""
+    context: str = ""
+    summary: str = ""
+    description: list[str] = []
+    highlights: list[str] = []
+    stack: list[str] = []
+    tags: list[str] = []
+    featured: bool = False
+    position: int = 0
+    experience: str | None = None
+
+
+class PortfolioImport(BaseModel):
+    profile: _importable(ProfileBase, "ProfileImport")
+    experiences: list[_importable(ExperienceBase, "ExperienceImport")] = []
+    projects: list[ProjectImport] = []
+    skill_groups: list[_importable(SkillGroupBase, "SkillGroupImport")] = []
+    education: list[_importable(EducationBase, "EducationImport")] = []
+    certifications: list[_importable(CertificationBase, "CertificationImport")] = []
+    interests: list[_importable(InterestBase, "InterestImport")] = []
+
+
+PROMPT = """Voici le CV d'un étudiant. Transforme-le en contenu structuré pour son portfolio web.
+
+Règles :
+- N'invente rien. Si une information est absente du CV, laisse le champ vide. Un portfolio
+  qui annonce une expérience inexistante est pire qu'un portfolio incomplet.
+- Écris dans la même langue que le CV.
+- Les slugs sont en minuscules avec des tirets, dérivés du nom (ex. "safran", "credit-scoring").
+- `position` suit l'ordre d'apparition dans le CV, en commençant à 0.
+- `photo` et `cv_url` restent vides : ces fichiers ne sont pas dans le CV.
+- Expériences : `contract` vaut Alternance, Stage, CDI, CDD, Freelance… `end_date` est
+  null si le poste est en cours. `highlights` reprend les missions, une par ligne.
+- Projets : `experience` contient le slug de l'expérience pendant laquelle le projet a été
+  réalisé, ou null pour un projet académique ou personnel. `tags` sont des thèmes larges
+  (ex. "Machine Learning", "Data Engineering"), `stack` les technologies concrètes.
+- Certifications : `kind` vaut "distinction" pour un prix, une mention ou un classement,
+  "certification" pour un diplôme ou une certification délivrée par un organisme.
+- `tagline` est une phrase d'accroche écrite à partir du profil, `about` quelques
+  paragraphes de présentation. C'est la seule part de rédaction autorisée : elle doit
+  rester fidèle au contenu du CV."""
+
+
+class CvImportFailed(Exception):
     """Échec côté modèle ou PDF illisible, avec un message montrable à l'utilisateur."""
 
 
@@ -56,16 +128,16 @@ def extract(pdf: bytes, api_key: str, model: str = DEFAULT_MODEL, attempts: int 
             )
         except errors.APIError as exc:
             if exc.code not in _TRANSIENT or attempt == attempts - 1:
-                raise ImportError_(f"Le service d'analyse a refusé l'appel ({exc.code}).") from exc
+                raise CvImportFailed(f"Le service d'analyse a refusé l'appel ({exc.code}).") from exc
             last = exc
             time.sleep(2**attempt)
             continue
 
         if response.parsed is None:
-            raise ImportError_("Le CV n'a pas pu être analysé. Vérifie que le PDF contient du texte.")
+            raise CvImportFailed("Le CV n'a pas pu être analysé. Vérifie que le PDF contient du texte.")
         return response.parsed
 
-    raise ImportError_(f"Le service d'analyse est indisponible ({last.code if last else '?'}).")
+    raise CvImportFailed(f"Le service d'analyse est indisponible ({last.code if last else '?'}).")
 
 
 def warnings(content: PortfolioImport) -> list[str]:
@@ -162,3 +234,41 @@ def apply_to_account(db: Session, user_id: int, content: PortfolioImport) -> dic
         "skill_groups": len(content.skill_groups),
         "interests": len(content.interests),
     }
+
+
+def main() -> None:
+    """python -m app.cv_import <cv.pdf> — analyse un CV sans passer par l'interface."""
+    import json
+    import sys
+
+    from .config import get_settings
+
+    if len(sys.argv) != 2:
+        sys.exit("Usage : python -m app.cv_import <cv.pdf>")
+    pdf = Path(sys.argv[1])
+    if not pdf.is_file():
+        sys.exit(f"Fichier introuvable : {pdf}")
+    key = get_settings().gemini_api_key
+    if not key:
+        sys.exit("GEMINI_API_KEY n'est pas défini.")
+
+    content = extract(pdf.read_bytes(), key)
+    out = Path(__file__).parent / "data" / "content.generated.json"
+    out.write_text(
+        json.dumps(content.model_dump(mode="json"), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(f"Écrit : {out}")
+    for label, items in (
+        ("expériences", content.experiences),
+        ("projets", content.projects),
+        ("formations", content.education),
+        ("certifications", content.certifications),
+    ):
+        print(f"  {len(items)} {label}")
+    for w in warnings(content):
+        print(f"  ! {w}")
+
+
+if __name__ == "__main__":
+    main()

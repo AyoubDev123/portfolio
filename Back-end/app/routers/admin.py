@@ -17,9 +17,10 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas, services
 from ..config import Settings
-from ..cv_import import MAX_PDF_BYTES, ImportError_, apply_to_account, extract, warnings
-from ..deps import get_db, get_settings, require_admin
+from ..cv_import import MAX_PDF_BYTES, CvImportFailed, apply_to_account, extract, warnings
+from ..deps import get_db, get_limiter, get_settings, require_admin
 from ..export_static import export_from_session
+from ..security import RateLimiter
 
 router = APIRouter(prefix="/api/admin", tags=["admin"], dependencies=[Depends(require_admin)])
 
@@ -228,23 +229,36 @@ async def import_cv(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
+    limiter: RateLimiter = Depends(get_limiter),
     user: models.User = Depends(require_admin),
 ):
     """Remplit le portfolio du compte à partir d'un CV PDF."""
     if not settings.gemini_api_key:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "L'analyse de CV n'est pas configurée sur ce serveur")
+
+    # Chaque import est un appel payant au modèle : on le borne par compte.
+    if not limiter.allow(f"import:{user.id}", settings.import_rate_limit, settings.import_rate_window_s):
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Trop d'imports. Réessaie dans quelques minutes.")
+
     if file.content_type != "application/pdf":
         raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "Seuls les fichiers PDF sont acceptés")
 
-    pdf = await file.read()
+    # Lecture par morceaux : lire d'abord puis mesurer ferait tenir en mémoire
+    # un envoi arbitrairement gros avant de le refuser.
+    chunks: list[bytes] = []
+    size = 0
+    while chunk := await file.read(64 * 1024):
+        size += len(chunk)
+        if size > MAX_PDF_BYTES:
+            raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Le PDF dépasse 10 Mo")
+        chunks.append(chunk)
+    pdf = b"".join(chunks)
     if not pdf:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Le fichier est vide")
-    if len(pdf) > MAX_PDF_BYTES:
-        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Le PDF dépasse 10 Mo")
 
     try:
         content = extract(pdf, settings.gemini_api_key)
-    except ImportError_ as exc:
+    except CvImportFailed as exc:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(exc)) from exc
 
     counts = apply_to_account(db, user.id, content)

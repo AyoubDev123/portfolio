@@ -11,9 +11,14 @@ router = APIRouter(prefix="/api", tags=["public"])
 
 
 def _owner(db: Session, slug: str) -> models.User:
-    """Le compte derrière /<slug>. Un portfolio non publié reste invisible."""
+    """Le compte derrière /<slug>.
+
+    Un brouillon reste invisible : tant que l'étudiant n'a pas publié, son
+    contenu à moitié rempli ne doit pas être atteignable par une URL devinée.
+    Même réponse que pour un slug inexistant, pour ne pas révéler qui a un compte.
+    """
     user = db.scalars(select(models.User).where(models.User.slug == slug)).first()
-    if user is None:
+    if user is None or not user.published:
         raise HTTPException(404, "Portfolio introuvable")
     return user
 

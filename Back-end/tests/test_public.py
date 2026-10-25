@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from conftest import SLUG
+from conftest import PAYLOAD, SLUG
 
 from app.export_static import DEFAULT_OUT, render_static_json
 from app.seed import load_content
@@ -92,3 +92,25 @@ def test_static_export_is_in_sync():
     """Si ce test échoue : `python -m app.export_static` puis commit."""
     committed = json.loads(Path(DEFAULT_OUT).read_text(encoding="utf-8"))
     assert _strip_ids(committed) == _strip_ids(json.loads(render_static_json()))
+
+
+def test_draft_portfolio_is_not_public(client, auth_client):
+    """Un portfolio non publié ne doit pas être atteignable par une URL devinée."""
+    r = auth_client.post(
+        "/api/auth/signup",
+        json={
+            "username": "brouillon",
+            "email": "brouillon@exemple.fr",
+            "password": "motdepasse1",
+            "first_name": "Bro",
+            "last_name": "Uillon",
+        },
+    )
+    assert r.status_code == 201
+
+    # Le compte existe et son contenu est éditable, mais rien n'est public.
+    assert client.get("/api/p/brouillon").status_code == 404
+    assert client.post("/api/p/brouillon/contact", json=PAYLOAD).status_code == 404
+
+    assert auth_client.post("/api/auth/publish").status_code == 200
+    assert client.get("/api/p/brouillon").status_code == 200

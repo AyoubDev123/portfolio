@@ -60,9 +60,15 @@ export function ImportPanel({ me, onMeChange, onImported }: Props) {
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-sm text-muted">Adresse de ton portfolio</p>
-          <a href={url} className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand hover:underline">
-            {url} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
+          {me.published ? (
+            <a href={url} className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand hover:underline">
+              {url} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </a>
+          ) : (
+            <p className="font-mono text-sm text-muted">
+              {url} <span className="font-sans">— visible une fois publié</span>
+            </p>
+          )}
         </div>
         {me.published ? (
           <span className="rounded-full bg-brand-soft px-3 py-1.5 text-sm font-medium text-brand">En ligne</span>
@@ -84,18 +90,25 @@ export function ImportPanel({ me, onMeChange, onImported }: Props) {
               Le contenu existant est remplacé. Ta photo et tes liens sont conservés.
             </p>
           </div>
+          {/* L'input porte le focus clavier ; sans `peer`, l'anneau de focus
+              s'afficherait sur un élément d'1 px et serait invisible. */}
           <input
             ref={input}
             type="file"
             accept="application/pdf"
-            className="sr-only"
+            className="peer sr-only"
             id="cv-file"
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) void upload(file);
             }}
           />
-          <label htmlFor="cv-file" className={`btn btn-ghost ${busy ? "pointer-events-none opacity-60" : ""}`}>
+          <label
+            htmlFor="cv-file"
+            className={`btn btn-ghost peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand ${
+              busy ? "pointer-events-none opacity-60" : "cursor-pointer"
+            }`}
+          >
             {busy ? "Analyse en cours…" : "Choisir un PDF"}
           </label>
         </div>

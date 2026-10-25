@@ -33,7 +33,7 @@ def post_contact(
     from sqlalchemy import select
 
     owner = db.scalars(select(models.User).where(models.User.slug == slug)).first()
-    if owner is None:
+    if owner is None or not owner.published:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Portfolio introuvable")
 
     db.add(

@@ -57,6 +57,7 @@ def bootstrap_admin(db, settings: Settings) -> None:
                 slug=settings.admin_username,
                 password_hash=hash_password(settings.admin_password),
                 is_staff=True,
+                published=True,
             )
         )
         db.commit()
