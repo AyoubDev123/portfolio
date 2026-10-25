@@ -1,5 +1,6 @@
 """Hash de mot de passe, JWT et rate limiting."""
 
+import hashlib
 import time
 import uuid
 from collections import defaultdict, deque
@@ -83,3 +84,55 @@ class RateLimiter:
     def reset(self) -> None:
         with self._lock:
             self._hits.clear()
+
+
+def create_purpose_token(user_id: int, purpose: str, secret: str, minutes: int, fingerprint: str = "") -> str:
+    """Jeton à usage unique pour la vérification d'e-mail ou la réinitialisation.
+
+    `fingerprint` lie le jeton à un état du compte : en y mettant le hash du mot
+    de passe, un lien de réinitialisation cesse de fonctionner dès que le mot de
+    passe change, donc il ne sert qu'une fois sans table de révocation.
+    """
+    payload = {
+        "sub": str(user_id),
+        "purpose": purpose,
+        "fp": hashlib.sha256(fingerprint.encode()).hexdigest()[:16] if fingerprint else "",
+        "exp": datetime.now(UTC) + timedelta(minutes=minutes),
+        "iat": datetime.now(UTC),
+    }
+    return jwt.encode(payload, secret, algorithm=ALGORITHM)
+
+
+def read_purpose_token(token: str, purpose: str, secret: str, fingerprint: str = "") -> int | None:
+    """Retourne l'id du compte, ou None si le jeton est invalide, expiré ou périmé."""
+    try:
+        payload = jwt.decode(token, secret, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
+        return None
+    if payload.get("purpose") != purpose:
+        return None
+    expected = hashlib.sha256(fingerprint.encode()).hexdigest()[:16] if fingerprint else ""
+    if payload.get("fp", "") != expected:
+        return None
+    try:
+        return int(payload["sub"])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def peek_token_subject(token: str, purpose: str, secret: str) -> int | None:
+    """Id du compte porté par un jeton valide, sans contrôler l'empreinte.
+
+    Sert à retrouver le compte pour en lire l'empreinte attendue ; la
+    vérification complète passe ensuite par read_purpose_token.
+    """
+    try:
+        payload = jwt.decode(token, secret, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
+        return None
+    if payload.get("purpose") != purpose:
+        return None
+    try:
+        return int(payload["sub"])
+    except (KeyError, TypeError, ValueError):
+        return None

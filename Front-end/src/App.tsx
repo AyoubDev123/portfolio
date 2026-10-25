@@ -5,6 +5,7 @@ import { Header } from "./components/Header";
 import { useLang } from "./lib/lang";
 import { PortfolioProvider } from "./lib/portfolio";
 import Home from "./pages/Home";
+import { ForgotPassword, ResetPassword, VerifyEmail } from "./pages/Account";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import ProjectPage from "./pages/ProjectPage";
@@ -43,6 +44,9 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/verifier" element={<VerifyEmail />} />
+      <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+      <Route path="/nouveau-mot-de-passe" element={<ResetPassword />} />
       <Route
         path="/admin"
         element={

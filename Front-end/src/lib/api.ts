@@ -73,6 +73,7 @@ export interface Me {
   email: string;
   published: boolean;
   is_staff: boolean;
+  email_verified: boolean;
 }
 
 export const getMe = () => request<Me>("/api/auth/me");
@@ -117,3 +118,24 @@ export const importCv = (file: File) => {
   body.append("file", file);
   return request<CvImportResult>("/api/admin/import-cv", { method: "POST", body });
 };
+
+// ── Compte ───────────────────────────────────────────────────────────────────
+export const requestVerification = () =>
+  request<{ ok: boolean }>("/api/auth/verify/request", { method: "POST" });
+
+export const confirmVerification = (token: string) =>
+  request<{ ok: boolean }>(`/api/auth/verify/${encodeURIComponent(token)}`, { method: "POST" });
+
+export const forgotPassword = (email: string) =>
+  request<{ ok: boolean }>("/api/auth/password/forgot", { method: "POST", body: JSON.stringify({ email }) });
+
+export const resetPassword = (token: string, password: string) =>
+  request<{ ok: boolean }>("/api/auth/password/reset", {
+    method: "POST",
+    body: JSON.stringify({ token, password }),
+  });
+
+export const exportMyData = () => request<unknown>("/api/auth/export");
+
+export const deleteMyAccount = (password: string) =>
+  request<void>("/api/auth/account/delete", { method: "POST", body: JSON.stringify({ password }) });

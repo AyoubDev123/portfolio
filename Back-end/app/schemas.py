@@ -227,6 +227,7 @@ class MeOut(BaseModel):
     email: str = ""
     published: bool = False
     is_staff: bool = False
+    email_verified: bool = False
 
 
 class SignupIn(BaseModel):
@@ -248,3 +249,16 @@ class CvImportOut(BaseModel):
 
     counts: dict[str, int]
     warnings: list[str] = []
+
+
+class EmailIn(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetIn(BaseModel):
+    token: str
+    password: str = Field(min_length=8, max_length=200)
+
+
+class DeleteAccountIn(BaseModel):
+    password: str

@@ -208,6 +208,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(200), unique=True, index=True, default="")
     password_hash: Mapped[str] = mapped_column(String(200))
     slug: Mapped[str] = mapped_column(String(80), unique=True, index=True)
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     is_staff: Mapped[bool] = mapped_column(Boolean, default=False)  # accès à l'espace établissement
     published: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

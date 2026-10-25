@@ -1,6 +1,7 @@
 import { LogOut, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { admin, ApiError, getMe, login, logout, type Me } from "../lib/api";
+import { AccountPanel } from "./AccountPanel";
 import { ImportPanel } from "./ImportPanel";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { ENTITIES, type EntityDef, type Field, type Row } from "./entities";
@@ -93,13 +94,18 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
         <button type="submit" className="btn btn-primary w-full" disabled={busy}>
           {busy ? "Connexion…" : "Se connecter"}
         </button>
+        <p className="text-center text-sm">
+          <a href="/mot-de-passe-oublie" className="text-muted hover:text-ink">
+            Mot de passe oublié ?
+          </a>
+        </p>
       </form>
     </div>
   );
 }
 
 // ── Tableau de bord ──────────────────────────────────────────────────────────
-type Tab = EntityDef | "messages";
+type Tab = EntityDef | "messages" | "compte";
 
 function Dashboard({
   me,
@@ -128,8 +134,8 @@ function Dashboard({
       </div>
 
       <div role="tablist" aria-label="Contenus" className="mt-8 flex flex-wrap gap-2">
-        {[...ENTITIES, "messages" as const].map((t) => {
-          const id = t === "messages" ? "messages" : t.id;
+        {[...ENTITIES, "messages" as const, "compte" as const].map((t) => {
+          const id = typeof t === "string" ? t : t.id;
           const selected = tab === t;
           return (
             <button
@@ -144,14 +150,16 @@ function Dashboard({
                   : "border-line bg-surface text-muted hover:border-brand hover:text-ink"
               }`}
             >
-              {t === "messages" ? "Messages" : t.label}
+              {t === "messages" ? "Messages" : t === "compte" ? "Mon compte" : t.label}
             </button>
           );
         })}
       </div>
 
       <div className="mt-8" role="tabpanel">
-        {tab === "messages" ? (
+        {tab === "compte" ? (
+          <AccountPanel me={me} />
+        ) : tab === "messages" ? (
           <Messages onAuthError={onSignOut} />
         ) : tab.singleton ? (
           <SingletonEditor key={`${tab.id}-${version}`} def={tab} onAuthError={onSignOut} />

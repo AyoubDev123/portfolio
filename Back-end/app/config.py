@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     contact_rate_window_s: int = 3600
     login_rate_limit: int = 10  # tentatives
     login_rate_window_s: int = 600
+    token_ttl_minutes: int = 60  # liens de vérification et de réinitialisation
+    public_base_url: str = "http://localhost:5173"  # pour construire les liens envoyés
     import_rate_limit: int = 5  # imports de CV (chacun coûte un appel au modèle)
     import_rate_window_s: int = 3600
 
