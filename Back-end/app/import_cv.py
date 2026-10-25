@@ -30,7 +30,7 @@ from .schemas import (
     SkillGroupBase,
 )
 
-DEFAULT_MODEL = "gemini-3.1-pro-preview"
+DEFAULT_MODEL = "gemini-3.5-flash"
 DEFAULT_OUT = Path(__file__).parent / "data" / "content.generated.json"
 
 

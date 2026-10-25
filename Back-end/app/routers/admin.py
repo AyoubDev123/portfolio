@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Request, Response, UploadFile, status
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas, services
 from ..config import Settings
+from ..cv_import import MAX_PDF_BYTES, ImportError_, apply_to_account, extract, warnings
 from ..deps import get_db, get_settings, require_admin
 from ..export_static import export_from_session
 
@@ -36,9 +37,9 @@ def _commit(db: Session) -> None:
         raise HTTPException(status.HTTP_409_CONFLICT, "Conflit : valeur déjà utilisée ou référence invalide") from exc
 
 
-def _schedule_snapshot(bg: BackgroundTasks, request: Request, settings: Settings, user_id: int) -> None:
+def _schedule_snapshot(bg: BackgroundTasks, request: Request, settings: Settings, user_id: int, slug: str) -> None:
     """Planifie la régénération du snapshot statique en arrière-plan si configuré."""
-    if not settings.static_snapshot_path:
+    if not settings.static_snapshot_path or slug != settings.static_snapshot_slug:
         return
     session_factory = request.app.state.session_factory
     out = Path(settings.static_snapshot_path)
@@ -87,7 +88,7 @@ def add_crud(
         db.add(obj)
         _commit(db)
         db.refresh(obj)
-        _schedule_snapshot(bg, request, settings, user.id)
+        _schedule_snapshot(bg, request, settings, user.id, user.slug)
         return out(obj)
 
     @router.get(f"/{path}/{{item_id}}", response_model=schema_out, name=f"get_{path}")
@@ -112,7 +113,7 @@ def add_crud(
         _apply(obj, body.model_dump())
         _commit(db)
         db.refresh(obj)
-        _schedule_snapshot(bg, request, settings, user.id)
+        _schedule_snapshot(bg, request, settings, user.id, user.slug)
         return out(obj)
 
     @router.delete(f"/{path}/{{item_id}}", status_code=204, name=f"delete_{path}")
@@ -126,7 +127,7 @@ def add_crud(
     ):
         db.delete(get_or_404(db, item_id, user))
         _commit(db)
-        _schedule_snapshot(bg, request, settings, user.id)
+        _schedule_snapshot(bg, request, settings, user.id, user.slug)
         return Response(status_code=204)
 
 
@@ -178,7 +179,7 @@ def put_profile(
         _apply(profile, data)
     _commit(db)
     db.refresh(profile)
-    _schedule_snapshot(bg, request, settings, user.id)
+    _schedule_snapshot(bg, request, settings, user.id, user.slug)
     return profile
 
 
@@ -218,3 +219,34 @@ def delete_message(
     db.delete(msg)
     db.commit()
     return Response(status_code=204)
+
+
+@router.post("/import-cv", response_model=schemas.CvImportOut)
+async def import_cv(
+    request: Request,
+    bg: BackgroundTasks,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+    user: models.User = Depends(require_admin),
+):
+    """Remplit le portfolio du compte à partir d'un CV PDF."""
+    if not settings.gemini_api_key:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "L'analyse de CV n'est pas configurée sur ce serveur")
+    if file.content_type != "application/pdf":
+        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "Seuls les fichiers PDF sont acceptés")
+
+    pdf = await file.read()
+    if not pdf:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Le fichier est vide")
+    if len(pdf) > MAX_PDF_BYTES:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Le PDF dépasse 10 Mo")
+
+    try:
+        content = extract(pdf, settings.gemini_api_key)
+    except ImportError_ as exc:
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(exc)) from exc
+
+    counts = apply_to_account(db, user.id, content)
+    _schedule_snapshot(bg, request, settings, user.id, user.slug)
+    return schemas.CvImportOut(counts=counts, warnings=warnings(content))

@@ -19,9 +19,31 @@ COOKIE_NAME = "access_token"
 # serait inaccessible, la route de l'app gagnant toujours sur /<slug>.
 RESERVED_SLUGS = frozenset(
     {
-        "admin", "signup", "login", "logout", "api", "app", "static", "assets",
-        "about", "help", "support", "contact", "settings", "account", "dashboard",
-        "p", "new", "edit", "me", "www", "mail", "blog", "docs", "legal", "privacy",
+        "admin",
+        "signup",
+        "login",
+        "logout",
+        "api",
+        "app",
+        "static",
+        "assets",
+        "about",
+        "help",
+        "support",
+        "contact",
+        "settings",
+        "account",
+        "dashboard",
+        "p",
+        "new",
+        "edit",
+        "me",
+        "www",
+        "mail",
+        "blog",
+        "docs",
+        "legal",
+        "privacy",
     }
 )
 
@@ -29,6 +51,7 @@ RESERVED_SLUGS = frozenset(
 def _reject_reserved(slug: str) -> None:
     if slug in RESERVED_SLUGS:
         raise HTTPException(status.HTTP_409_CONFLICT, "Cette adresse est réservée")
+
 
 # Hash factice pour égaliser le temps de réponse quand l'utilisateur n'existe pas.
 _DUMMY_HASH = hash_password("dummy-password")

@@ -9,3 +9,6 @@ __pycache__/
 
 # Sortie du POC d import de CV (regenerable)
 app/data/content.generated.json
+
+# Sauvegardes locales de la base
+*.db.bak-*

@@ -7,4 +7,5 @@ email-validator>=2.2
 pyjwt>=2.9
 bcrypt>=4.2
 psycopg[binary]>=3.2  # PostgreSQL (optionnel : DATABASE_URL=postgres://...)
-google-genai>=2.33  # POC import de CV (python -m app.import_cv)
+google-genai>=2.33  # import de CV
+python-multipart>=0.0.20  # upload du PDF de CV

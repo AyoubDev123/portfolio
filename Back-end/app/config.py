@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     admin_username: str = ""
     admin_password: str = ""  # si les deux sont définis, le compte est créé au 1er démarrage
 
+    # Slug du portfolio embarqué dans le bundle du front. En multi-tenant le
+    # snapshot est un fichier unique : seul ce compte le régénère, sinon
+    # n'importe quel étudiant écraserait le portfolio de démonstration.
+    static_snapshot_slug: str = ""
+
     # Snapshot statique : chemin du JSON régénéré après chaque mutation admin.
     # En production Docker, pointer vers le volume partagé avec Nginx (/data/snapshot.json).
     # Laisser vide pour désactiver (ex. hébergement statique sans volume).

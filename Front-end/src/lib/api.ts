@@ -13,7 +13,8 @@ export class ApiError extends Error {
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
-  if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
+  const isForm = init.body instanceof FormData;
+  if (init.body && !isForm && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
 
   const res = await fetch(`${BASE}${path}`, {
     ...init,
@@ -104,4 +105,15 @@ export const admin = {
     request<T>(`/api/admin/${path}`, { method: "PATCH" }),
   remove: (path: string, id: number) =>
     request<void>(`/api/admin/${path}/${id}`, { method: "DELETE" }),
+};
+
+export interface CvImportResult {
+  counts: Record<string, number>;
+  warnings: string[];
+}
+
+export const importCv = (file: File) => {
+  const body = new FormData();
+  body.append("file", file);
+  return request<CvImportResult>("/api/admin/import-cv", { method: "POST", body });
 };

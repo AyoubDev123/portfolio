@@ -1,19 +1,20 @@
 import { LogOut, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { admin, ApiError, getMe, login, logout } from "../lib/api";
+import { admin, ApiError, getMe, login, logout, type Me } from "../lib/api";
+import { ImportPanel } from "./ImportPanel";
 import { useDocumentTitle } from "../lib/useDocumentTitle";
 import { ENTITIES, type EntityDef, type Field, type Row } from "./entities";
 import { FormError, toFormState, toPayload, type FormState } from "./form";
 
 export default function AdminPage() {
   useDocumentTitle("Administration · Portfolio");
-  // null = inconnu (vérif en cours), false = non connecté, true = connecté
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  // undefined = vérification en cours, null = non connecté
+  const [me, setMe] = useState<Me | null | undefined>(undefined);
 
   useEffect(() => {
     getMe()
-      .then(() => setAuthed(true))
-      .catch(() => setAuthed(false));
+      .then(setMe)
+      .catch(() => setMe(null));
   }, []);
 
   const signOut = useCallback(async () => {
@@ -22,12 +23,12 @@ export default function AdminPage() {
     } catch {
       /* ignore */
     }
-    setAuthed(false);
+    setMe(null);
   }, []);
 
-  if (authed === null) return <p className="container-page pt-20 text-muted">Chargement…</p>;
-  if (!authed) return <Login onSuccess={() => setAuthed(true)} />;
-  return <Dashboard onSignOut={signOut} />;
+  if (me === undefined) return <p className="container-page pt-20 text-muted">Chargement…</p>;
+  if (me === null) return <Login onSuccess={() => getMe().then(setMe).catch(() => setMe(null))} />;
+  return <Dashboard me={me} onMeChange={setMe} onSignOut={signOut} />;
 }
 
 // ── Connexion ────────────────────────────────────────────────────────────────
@@ -100,8 +101,18 @@ function Login({ onSuccess }: { onSuccess: () => void }) {
 // ── Tableau de bord ──────────────────────────────────────────────────────────
 type Tab = EntityDef | "messages";
 
-function Dashboard({ onSignOut }: { onSignOut: () => void }) {
+function Dashboard({
+  me,
+  onMeChange,
+  onSignOut,
+}: {
+  me: Me;
+  onMeChange: (me: Me) => void;
+  onSignOut: () => void;
+}) {
   const [tab, setTab] = useState<Tab>(ENTITIES[0]);
+  // Change après un import : force les éditeurs à recharger leur contenu.
+  const [version, setVersion] = useState(0);
 
   return (
     <div className="container-page pt-10">
@@ -112,7 +123,11 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
         </button>
       </div>
 
-      <div role="tablist" aria-label="Contenus" className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6">
+        <ImportPanel me={me} onMeChange={onMeChange} onImported={() => setVersion((v) => v + 1)} />
+      </div>
+
+      <div role="tablist" aria-label="Contenus" className="mt-8 flex flex-wrap gap-2">
         {[...ENTITIES, "messages" as const].map((t) => {
           const id = t === "messages" ? "messages" : t.id;
           const selected = tab === t;
@@ -139,9 +154,9 @@ function Dashboard({ onSignOut }: { onSignOut: () => void }) {
         {tab === "messages" ? (
           <Messages onAuthError={onSignOut} />
         ) : tab.singleton ? (
-          <SingletonEditor key={tab.id} def={tab} onAuthError={onSignOut} />
+          <SingletonEditor key={`${tab.id}-${version}`} def={tab} onAuthError={onSignOut} />
         ) : (
-          <CollectionEditor key={tab.id} def={tab} onAuthError={onSignOut} />
+          <CollectionEditor key={`${tab.id}-${version}`} def={tab} onAuthError={onSignOut} />
         )}
       </div>
     </div>

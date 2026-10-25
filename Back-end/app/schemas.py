@@ -241,3 +241,10 @@ class SignupIn(BaseModel):
 
 class SlugIn(BaseModel):
     slug: str = Field(min_length=3, max_length=80, pattern=SLUG)
+
+
+class CvImportOut(BaseModel):
+    """Résultat d'un import : ce qui a été repris, et ce qui mérite une relecture."""
+
+    counts: dict[str, int]
+    warnings: list[str] = []
