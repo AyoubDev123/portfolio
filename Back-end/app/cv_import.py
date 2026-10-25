@@ -28,7 +28,15 @@ from .schemas import (
     SkillGroupBase,
 )
 
-DEFAULT_MODEL = "gemini-3.5-flash"
+# Le tier gratuit n'a pas de capacité garantie : un modèle saturé répond 503
+# alors qu'un autre passe. On en essaie plusieurs plutôt que de renvoyer un
+# échec à l'étudiant parce qu'une file était pleine à cet instant.
+DEFAULT_MODELS = (
+    "gemini-3.5-flash",
+    "gemini-3-flash-preview",
+    "gemini-3.6-flash",
+    "gemini-flash-lite-latest",
+)
 MAX_PDF_BYTES = 10 * 1024 * 1024
 
 # Le contenu remplacé par un import, dans l'ordre inverse des dépendances.
@@ -112,32 +120,37 @@ class CvImportFailed(Exception):
 _TRANSIENT = {429, 500, 503}
 
 
-def extract(pdf: bytes, api_key: str, model: str = DEFAULT_MODEL, attempts: int = 3) -> PortfolioImport:
+def extract(
+    pdf: bytes,
+    api_key: str,
+    models: tuple[str, ...] = DEFAULT_MODELS,
+    attempts_per_model: int = 2,
+) -> PortfolioImport:
     client = genai.Client(api_key=api_key)
-    last: errors.APIError | None = None
+    document = types.Part.from_bytes(data=pdf, mime_type="application/pdf")
+    config = types.GenerateContentConfig(
+        response_mime_type="application/json",
+        response_schema=PortfolioImport,
+    )
 
-    for attempt in range(attempts):
-        try:
-            response = client.models.generate_content(
-                model=model,
-                contents=[types.Part.from_bytes(data=pdf, mime_type="application/pdf"), PROMPT],
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=PortfolioImport,
-                ),
-            )
-        except errors.APIError as exc:
-            if exc.code not in _TRANSIENT or attempt == attempts - 1:
-                raise CvImportFailed(f"Le service d'analyse a refusé l'appel ({exc.code}).") from exc
-            last = exc
-            time.sleep(2**attempt)
-            continue
+    for model in models:
+        for attempt in range(attempts_per_model):
+            try:
+                response = client.models.generate_content(model=model, contents=[document, PROMPT], config=config)
+            except errors.APIError as exc:
+                if exc.code not in _TRANSIENT:
+                    # Clé invalide, quota épuisé, modèle retiré : changer de
+                    # modèle n'y changerait rien.
+                    raise CvImportFailed(f"Le service d'analyse a refusé l'appel ({exc.code}).") from exc
+                if attempt + 1 < attempts_per_model:
+                    time.sleep(2**attempt)
+                continue
 
-        if response.parsed is None:
-            raise CvImportFailed("Le CV n'a pas pu être analysé. Vérifie que le PDF contient du texte.")
-        return response.parsed
+            if response.parsed is None:
+                raise CvImportFailed("Le CV n'a pas pu être analysé. Vérifie que le PDF contient du texte.")
+            return response.parsed
 
-    raise CvImportFailed(f"Le service d'analyse est indisponible ({last.code if last else '?'}).")
+    raise CvImportFailed("Les serveurs d'analyse sont tous saturés en ce moment. Réessaie dans quelques minutes.")
 
 
 def warnings(content: PortfolioImport) -> list[str]:
