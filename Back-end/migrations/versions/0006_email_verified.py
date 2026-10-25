@@ -17,7 +17,8 @@ def upgrade() -> None:
     with op.batch_alter_table("user_account") as b:
         b.add_column(sa.Column("email_verified", sa.Boolean(), nullable=False, server_default="0"))
     # Les comptes déjà créés avant la vérification ne sont pas invalidés.
-    op.execute("UPDATE user_account SET email_verified = 1")
+    # TRUE et non 1 : PostgreSQL refuse un entier pour une colonne booléenne.
+    op.execute("UPDATE user_account SET email_verified = TRUE")
 
 
 def downgrade() -> None:
